@@ -252,7 +252,7 @@ Status ListInsert_L(LinkList *L,int i,ElemType e){
 }	// ListInsert_L 
 
 Status MergeList_L(LinkList *La,LinkList *Lb,LinkList *Lc,
-									int (*compare)(ElemType,ElemType)){
+						int (*compare)(ElemType,ElemType)){
 	// 已知单链线性表La和Lb中的元素按值非递减排列。
 	// 归并La和Lb得到新的单链线性表Lc，Lc的元素也按值非递减排列。 
 	if(!InitList(Lc)) return ERROR;		//存储空间分配失败 
