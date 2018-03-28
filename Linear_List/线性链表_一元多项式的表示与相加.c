@@ -15,27 +15,27 @@ typedef LinkList Polynomial;	//用带表头结点的有序链表表示多项式
 	//表示一元多项式的应该是有序链表，其基本操作定义与线性链表有两处不同，
 	//一是LocateElem的职责不同，二是需增加按有序关系进行插入的操作OrderInsert	
 Status OrderLocateElem(LinkList L,ElemType e,Position *q,
-										int (*compare)(ElemType,ElemType)){
+						int (*compare)(ElemType,ElemType)){
 	//若有序链表L中存在与e满足判定函数compare()取值为0的元素，则q指示L中第一个
 	//值为e的节点的位置，并返回TRUE；否则q指示第一个与e满足判定函数compare()取
 	//值>0的元素的前驱的位置，并返回FALSE
 	Link p = GetHead(L);
 	int FIRST = 0;
 	while(p->next){
-		if((*compare)(p->next->data,e)==0){		//存在与e满足判定函数compare()取值为0的元素
-			*q = p->next;						//指示L中第一个值为e的节点的位置
+		if((*compare)(p->next->data,e)==0){	//存在与e满足判定函数compare()取值为0的元素
+			*q = p->next;			//指示L中第一个值为e的节点的位置
 			return TRUE;
 		}
 		else if((*compare)(p->next->data,e)>0){	//寻找第一个与e满足判定函数
-			if(!FIRST){							//compare()取值>0的元素的前驱
+			if(!FIRST){			//compare()取值>0的元素的前驱
 				*q = p;
 				FIRST = 1;
 			}
 		}
 		p = p->next;
 	}
-	if(!FIRST)			//不存在与e满足判定函数compare()取值>0的元素
-	*q = L.tail;		//q指向尾结点							
+	if(!FIRST)	//不存在与e满足判定函数compare()取值>0的元素
+	*q = L.tail;	//q指向尾结点							
 	return FALSE;
 }//OrderLocateElem 
 
@@ -44,15 +44,15 @@ Status OrderInsert(LinkList *L,ElemType e,int (*compare)(ElemType,ElemType)){
 	Link p = L->head->next;
 	Link s;
 	while(p){
-		if((*compare)(p->data,e) > 0){			//寻找值比e大的第一个结点
+		if((*compare)(p->data,e) > 0){	//寻找值比e大的第一个结点
 			if(!MakeNode(&s,e)) return ERROR;
-			InsBefore(L,&p,s);					//将值为e的结点插入到该结点之前 
+			InsBefore(L,&p,s);	//将值为e的结点插入到该结点之前 
 			return OK;
 		}
 		p = p->next;
 	}
 	if(!MakeNode(&s,e)) return ERROR;
-	Append(L,s); return OK;						//如果没有值比e大的结点，则插入到末尾 
+	Append(L,s); return OK;		//如果没有值比e大的结点，则插入到末尾 
 }//OrderInsert
 
 	//- - - - - 通用基本函数的算法描述 - - - - - 
@@ -68,16 +68,16 @@ void CreatePolyn(Polynomial *P,int m){
 	//输入m项的系数和指数，建立表示一元多项式的有序链表P
 	int i; ElemType e; Link s; Link q;
 	InitList(P); Link h= GetHead(*P);
-	e.coef = 0.0; e.expn = -1; SetCurElem(h,e);		//设置头结点的数据元素 
+	e.coef = 0.0; e.expn = -1; SetCurElem(h,e);	//设置头结点的数据元素 
 	printf("请输入各项的系数与指数，中间用空格隔开;\n");
 	for(i=1;i<=m;++i){	//依次输入m个非零项
 		back:printf("请输入第%d项：",i); 
 		scanf("%f %d",&e.coef,&e.expn);
-		if(e.coef == 0.0){							//输入系数为0无意义
+		if(e.coef == 0.0){	//输入系数为0无意义
 			printf("输入系数不能为0，请检查后重新输入！\n");
 			goto back;
 		}
-		if(!OrderLocateElem(*P,e,&q,&cmp)){			//当前链表中不存在该指数项★ 
+		if(!OrderLocateElem(*P,e,&q,&cmp)){	//当前链表中不存在该指数项★ 
 			if(MakeNode(&s,e)) InsAfter(P,&q,s);	//生成结点并插入链表 
 		}
 		else{
@@ -97,23 +97,23 @@ void PrintPolyn(Polynomial P){
 	//打印输出一元多项式P
 	Link q = P.head->next;
 	while(q){
-		if(q->data.coef == 1.0){			//系数为1.0 
-			if(q != P.head->next)			//第1项系数不打印任何字符 
+		if(q->data.coef == 1.0){		//系数为1.0 
+			if(q != P.head->next)		//第1项系数不打印任何字符 
 				printf("+");
 		}
 		else if(q->data.coef == -1.0)		//系数为-1.0
 			printf("-"); 
 		else if(q->data.coef > 1.0){		//系数>1.0
-			if(q == P.head->next)			//第1项系数不打印"+" 
+			if(q == P.head->next)		//第1项系数不打印"+" 
 				printf("%g",q->data.coef);
 			else 
 				printf("+%g",q->data.coef);
-		}									//系数<-1.0
-		else printf("%g",q->data.coef);
+		}
+		else printf("%g",q->data.coef);		//系数<-1.0
 		switch(q->data.expn){
 			case 0:	if(q->data.coef==1.0||q->data.coef==-1.0)
-					printf("1");			//指数为0且系数为1或-1 
-			 	   	break;					//指数为0系数为其他 
+					printf("1");		//指数为0且系数为1或-1 
+			 	break;				//指数为0系数为其他 
 			case 1:	printf("x"); break;		//指数为1 
 			default:printf("x^%d",q->data.expn); break; 
 		}
@@ -129,7 +129,7 @@ int PolynLength(Polynomial P){
 
 void AddPolyn(Polynomial *Pa,Polynomial *Pb){
 	//完成多项式相加运算，即：Pa = Pa + Pb，并销毁一元多项式Pb
-	Link ha = GetHead(*Pa); Link hb = GetHead(*Pb);			//ha和hb分别指向Pa和Pb的头结点 
+	Link ha = GetHead(*Pa); Link hb = GetHead(*Pb);		//ha和hb分别指向Pa和Pb的头结点 
 	Link qa = NextPos(*Pa,ha); Link qb = NextPos(*Pb,hb);	//qa和qb分别指向Pa和Pb中当前结点 
 	while(qa&&qb){	//qa和qb均非空 
 		term a = GetCurElem(qa); term b = GetCurElem(qb);	//a和b为两表中当前比较元素 
@@ -140,7 +140,7 @@ void AddPolyn(Polynomial *Pa,Polynomial *Pb){
 				DelFirst(hb,&qb); InsFirst(ha,qb); ++Pa->len;
 				qb = NextPos(*Pb,hb); ha = NextPos(*Pa,ha); break;
 			case 0:		//两者的指数值相等 
-				{float sum = a.coef + b.coef;				//★不要把变量定义在case或goto的label之后，因为变量定义不是语句 
+				{float sum = a.coef + b.coef;			//★不要把变量定义在case或goto的label之后，因为变量定义不是语句 
 				if(!sum){	//删除多项式Pa中当前结点		//解决方法为预先定义或用括号将其与作用域括起来 
 					if(Pa->tail == qa) Pa->tail = PriorPos(*Pa,qa);	//如果qa是尾结点，则设置新的尾结点为其前趋 
 					DelFirst(ha,&qa); FreeNode(&qa); --Pa->len;
@@ -159,7 +159,7 @@ void AddPolyn(Polynomial *Pa,Polynomial *Pb){
 
 void SubtractPolyn(Polynomial *Pa,Polynomial *Pb){
 	//完成多项式相减运算，即：Pa = Pa - Pb，并销毁一元多项式Pb
-	Link ha = GetHead(*Pa); Link hb = GetHead(*Pb);			//ha和hb分别指向Pa和Pb的头结点
+	Link ha = GetHead(*Pa); Link hb = GetHead(*Pb);		//ha和hb分别指向Pa和Pb的头结点
 	Link qa = NextPos(*Pa,ha); Link qb = NextPos(*Pb,hb);	//qa和qb分别指向Pa和Pb中当前结点
 	while(qa&&qb){	//qa和qb均非空
 		term a = GetCurElem(qa); term b = GetCurElem(qb);	//a和b为两表中当前比较元素
@@ -188,7 +188,7 @@ void SubtractPolyn(Polynomial *Pa,Polynomial *Pb){
 		qb->data.coef = -qb->data.coef;
 		qb = NextPos(*Pa,qb);
 	}
-	FreeNode(&hb);			//释放Pb的头结点 
+	FreeNode(&hb);		//释放Pb的头结点 
 	Pb->head = Pb->tail = NULL; Pb->len = 0; //设置Pb为销毁状态
 }//SubtractPolyn 
 
@@ -217,7 +217,7 @@ void MultiplyPolyn(Polynomial *Pa,Polynomial *Pb){
 		qb = NextPos(*Pb,hb);
 	}
 	AddPolyn(Pa,&Ptmp1);	//Pa已为空，将Ptmp1存入Pa中 
-	DestroyList(Pb);		//销毁Pb 
+	DestroyList(Pb);	//销毁Pb 
 	free(Ptmp1.head);Ptmp1.head = Ptmp1.tail = NULL; Ptmp1.len = 0;	//销毁Ptmp1 
 	DestroyList(&Ptmp2);	//销毁Ptmp2 
 }//MultiplyPolyn
