@@ -12,13 +12,13 @@
 
 //- - - - - 扩展的线性单链表 - - - - -  
 typedef struct LNode {	//结点类型 
-	ElemType 	  		data;
+	ElemType 	  	data;
 	struct LNode 		*next;
 }*Link, *Position; 
 
 typedef struct {		//链表类型		
 	Link head,tail;		//分别指向线性链表中的头结点和最后一个结点 
-	int len;			//指示线性链表中数据元素的个数 
+	int len;		//指示线性链表中数据元素的个数 
 }LinkList;
 //- - - - - - - - - - - - - - - - - - - - - 
 
@@ -32,7 +32,7 @@ Status MakeNode(Link *p,ElemType e){
 
 void FreeNode(Link *p){
 	// 释放p所指结点
-	free(*p);			//释放空间 
+	free(*p);		//释放空间 
 	(*p) = NULL;		//*p指针设为NULL，防止野指针出现★ 
 }	// FreeNode
 
@@ -107,14 +107,14 @@ Status Append(LinkList *L,Link s){
 Status Remove(LinkList *L,Link *q){
 	// 删除线性链表L中的尾结点并以q返回，改变链表L的尾指针指向新的尾结点
 	if(!L->len){
-		*q = NULL;			//L中仅有头结点，返回NULL 
+		*q = NULL;		//L中仅有头结点，返回NULL 
 		return ERROR;
 	} 
 	*q = L->tail;
 	Link p = L->head;
 	while(p->next!=*q) p = p->next;	//寻找尾结点的前驱 
 	p->next = NULL;
-	L->tail = p; --L->len;			//更改尾结点及链表长
+	L->tail = p; --L->len;		//更改尾结点及链表长
 	return OK;
 }	// Remove
 
@@ -124,10 +124,10 @@ Status InsBefore(LinkList *L,Link *p,Link s){
 	Link q = L->head;
 	while(q->next&&q->next!=*p)
 		q = q->next;
-	if(!q->next) return ERROR;		//p所指不在链表中 
-	q->next = s; s->next = *p;		//插入节点 
-	*p = s;							//指针p指向新插入结点 
-	++L->len;						//修改链表长 
+	if(!q->next) return ERROR;	//p所指不在链表中 
+	q->next = s; s->next = *p;	//插入节点 
+	*p = s;				//指针p指向新插入结点 
+	++L->len;			//修改链表长 
 	return OK;
 }	// InsBefore
 
@@ -138,9 +138,9 @@ Status InsAfter(LinkList *L,Link *p,Link s){
 	while(q&&q!=*p) q = q->next;
 	if(!q) return ERROR;			//p所指不在链表中
 	s->next = (*p)->next; (*p)->next = s;	//插入结点 
-	if(*p == L->tail) L->tail = s;			//若插入到尾结点之后，更改尾指针 
-	++L->len;						//修改链表长 
-	*p = s;							//修改p指针指向新插入结点 
+	if(*p == L->tail) L->tail = s;		//若插入到尾结点之后，更改尾指针 
+	++L->len;				//修改链表长 
+	*p = s;					//修改p指针指向新插入结点 
 	return OK;
 }	// InsAfter
 
@@ -245,9 +245,9 @@ Status ListInsert_L(LinkList *L,int i,ElemType e){
 	// 在带头结点的单链线性表L中的第i个元素之前插入元素e
 	Link p,q;
 	if(!(LocatePos(*L,i-1,&p))) return ERROR;	//i值不合法 
-	if(!MakeNode(&q,e)) return ERROR;			//结点存储分配失败 
+	if(!MakeNode(&q,e)) return ERROR;		//结点存储分配失败 
 	InsFirst(p,q);	//对于第i个结点开始的链表，第i-1个结点是它的头结点 
-	++L->len;		//L表长+1 
+	++L->len;	//L表长+1 
 	return OK;
 }	// ListInsert_L 
 
@@ -255,19 +255,19 @@ Status MergeList_L(LinkList *La,LinkList *Lb,LinkList *Lc,
 									int (*compare)(ElemType,ElemType)){
 	// 已知单链线性表La和Lb中的元素按值非递减排列。
 	// 归并La和Lb得到新的单链线性表Lc，Lc的元素也按值非递减排列。 
-	if(!InitList(Lc)) return ERROR;					//存储空间分配失败 
+	if(!InitList(Lc)) return ERROR;		//存储空间分配失败 
 	Link ha = GetHead(*La); Link hb = GetHead(*Lb);	//ha和hb分别指向La和Lb的头结点 
 	Link pa = NextPos(*La,ha); Link pb = NextPos(*Lb,hb);	//pa和pb分别指向La和Lb中当前结点 
 	ElemType a,b; Link q;
-	while(pa&&pb){											//La和Lb均非空 
-		a = GetCurElem(pa); b = GetCurElem(pb);				//a和b为两表中当前比较元素 
+	while(pa&&pb){		//La和Lb均非空 
+		a = GetCurElem(pa); b = GetCurElem(pb);		//a和b为两表中当前比较元素 
 		if((*compare)(a,b)<=0){	// a<=b
 			DelFirst(ha,&q); Append(Lc,q); pa = NextPos(*La,ha); }
 		else{	// a>b
 			DelFirst(hb,&q); Append(Lc,q); pb = NextPos(*Lb,hb); }
 	}//while
-	if(pa) Append(Lc,pa);				//链接La中剩余结点 
-	else Append(Lc,pb);					//链接Lb中剩余结点 
+	if(pa) Append(Lc,pa);			//链接La中剩余结点 
+	else Append(Lc,pb);			//链接Lb中剩余结点 
 	FreeNode(&ha); FreeNode(&hb);		//释放La和Lb的头结点 
 	return OK;
 }	// MergeList_L
