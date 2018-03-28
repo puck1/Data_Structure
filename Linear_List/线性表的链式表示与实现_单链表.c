@@ -15,23 +15,23 @@ Status GetElem_L(LinkList L,int i,ElemType *e){
 	//L为带头节点的单链表的头指针。
 	//当第i个元素存在时，其值赋给e并返回OK，否则返回ERROR
 	LinkList p = L->next; int j = 1;	//初始化，p指向第一个结点，j为计数器★
-	while(p && j<i){					//顺指针向后查找，直到p指向第i个元素或p为空 
+	while(p && j<i){			//顺指针向后查找，直到p指向第i个元素或p为空 
 		p = p->next; ++j; 
 	}
-	if(!p||j>i) return ERROR;			//第i个元素不存在 
-	*e = p->data;						//取第i个元素 
+	if(!p||j>i) return ERROR;		//第i个元素不存在 
+	*e = p->data;				//取第i个元素 
 	return OK; 
 }//GetElem_L
 
 Status ListInsert_L(LinkList *L,int i,ElemType e){
 	//在带头节点的单链线性表L中第i个位置之前插入元素e
-	LinkList p = *L; int j = 0;						//★(有可能在第一个位置前插入)
+	LinkList p = *L; int j = 0;			//★(有可能在第一个位置前插入)
 	while(p && j<i-1){
-		p = p->next; ++j;							//寻找第i-1个结点 
+		p = p->next; ++j;			//寻找第i-1个结点 
 	}
-	if(!p||j>i-1) return ERROR;						//i小于1或者大于表长加1★
+	if(!p||j>i-1) return ERROR;			//i小于1或者大于表长加1★
 	LinkList s = (LinkList)malloc(sizeof(LNode));	//生成新结点 
-	s->data = e; s->next = p->next;					//插入L中 
+	s->data = e; s->next = p->next;			//插入L中 
 	p->next = s; 
 	return OK;
 } //ListInsert_L
@@ -42,7 +42,7 @@ Status ListDelete_L(LinkList *L,int i,ElemType *e){
 	while(p->next && j<i-1){	//寻找第i个结点，并令p指向其前趋 
 		p = p->next; ++j;
 	}
-	if(!p->next||j>i-1) return ERROR;			//删除位置不合理 
+	if(!p->next||j>i-1) return ERROR;		//删除位置不合理 
 	LinkList s = p->next; p->next = s->next;	//删除并释放结点 
 	*e = s->data; free(s);
 	return OK;
@@ -56,7 +56,7 @@ void CreateList_L(LinkList *L,int n){	//(应传入双重指针，以在局部函
 	for(i=n;i>0;--i){
 		p = (LinkList)malloc(sizeof(LNode));	//生成新结点 
 		printf("请输入第%d个元素的值:",i);
-	 	scanf("%d",&p->data);					//输入元素值 
+	 	scanf("%d",&p->data);			//输入元素值 
 	 	p->next = (*L)->next; (*L)->next = p; 	//插入到表头 
 	 }
 	 printf("单链表建立完成!\n\n");
@@ -66,15 +66,15 @@ void MergeList_L(LinkList *La,LinkList *Lb,LinkList *Lc){
 	//已知单链线性表La和Lb的元素按值非递减排列。
 	//归并La和Lb得到新的单链线性表Lc，Lc的元素也按值非递减排列。 
 	LinkList pa = (*La)->next; LinkList pb = (*Lb)->next;
-	LinkList pc = *Lc = *La;				//用La的头结点作为Lc的头结点 
+	LinkList pc = *Lc = *La;	//用La的头结点作为Lc的头结点 
 	while(pa&&pb){
 		if(pa->data<pb->data){
 			pc->next = pa; pc = pa; pa = pa->next;
 		}
 		else{pc->next = pb; pc = pb; pb = pb->next;}
 	}
-	pc->next = pa?pa:pb;					//插入剩余段★ 
-	free(*Lb);								//释放lb的头结点 
+	pc->next = pa?pa:pb;	//插入剩余段★ 
+	free(*Lb);		//释放lb的头结点 
 } //MergeList_L
 
 int main(){
