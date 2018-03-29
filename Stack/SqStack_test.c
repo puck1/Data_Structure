@@ -1,5 +1,5 @@
 
-typedef int SElemType; 	//栈中存储元素暂定为int 
+typedef int SElemType; 	//测试所用栈中存储元素暂定为int 
 
 #include <stdio.h>
 #include "SqStack.h" 
