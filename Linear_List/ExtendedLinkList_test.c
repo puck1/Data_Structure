@@ -3,7 +3,7 @@
  * This file includes creating,traverse,merge and some other basic operateions.
  */
 
-typedef int ElemType;	//线性表的数据类型暂定为int 
+typedef int ElemType;	//测试所用线性表数据类型暂定为int 
 
 #include <stdio.h>
 #include "status.h"
