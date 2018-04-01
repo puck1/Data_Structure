@@ -14,13 +14,13 @@ typedef struct QNode{
 
 typedef struct{
 	QueuePtr front;	//队头指针 
-	QueuePtr rare;	//队尾指针 
+	QueuePtr rear;	//队尾指针 
 }LinkQueue;
 
 // - - - - - 基本操作的函数算法说明 - - - - - 
 Status InitQueue(LinkQueue *Q){
 	//构造一个空队列Q
-	Q->front = Q->rare = (QueuePtr)malloc(sizeof(QNode));
+	Q->front = Q->rear = (QueuePtr)malloc(sizeof(QNode));
 	if(!Q->front) exit(OVERFLOW);		//存储分配失败 
 	Q->front->next = NULL;
 	return OK;
@@ -29,9 +29,9 @@ Status InitQueue(LinkQueue *Q){
 Status DestroyQueue(LinkQueue *Q){
 	//销毁队列Q，Q不再存在
 	while(Q->front){
-		Q->rare = Q->front->next;
+		Q->rear = Q->front->next;
 		free(Q->front);
-		Q->front = Q->rare;
+		Q->front = Q->rear;
 	}
 	Q = NULL;
 	return OK;
@@ -39,19 +39,19 @@ Status DestroyQueue(LinkQueue *Q){
 
 Status ClearQueue(LinkQueue *Q){
 	//将Q清为空队列
-	Q->rare = Q->front->next;
-	while(Q->rare){
-		Q->front->next = Q->rare->next; 
-		free(Q->rare);
-		Q->rare = Q->front->next; 
+	Q->rear = Q->front->next;
+	while(Q->rear){
+		Q->front->next = Q->rear->next; 
+		free(Q->rear);
+		Q->rear = Q->front->next; 
 	}
-	Q->rare = Q->front;
+	Q->rear = Q->front;
 	return OK;
 }//ClearQueue
 
 Status QueueEmpty(LinkQueue Q){
 	//若队列Q为空队列，则返回TRUE，否则返回FALSE
-	return (Q.front == Q.rare)? TRUE:FALSE;
+	return (Q.front == Q.rear)? TRUE:FALSE;
 }//QueueEmpty 
 
 int QueueLength(LinkQueue Q){
@@ -65,32 +65,32 @@ int QueueLength(LinkQueue Q){
 	return cnt;
 }//QueueLength
 
-Status GetHead(LinkQueue Q,QElemType *e){
+Status GetQHead(LinkQueue Q,QElemType *e){
 	//若队列不空，则用e返回Q的队头元素，并返回OK；否则返回ERROR
 	if(Q.front->next){
 		*e = Q.front->next->data;
 		return OK;
 	}
 	return ERROR;
-}//GetHead
+}//GetQHead
 
 Status EnQueue(LinkQueue *Q,QElemType e){
 	//插入元素e为Q的新的队尾元素
-	QueuePtr newrare = (QueuePtr)malloc(sizeof(QNode));
-	if(!newrare) exit(OVERFLOW);
-	newrare->data = e; newrare->next = NULL;
-	Q->rare->next = newrare;
-	Q->rare = newrare;		//尾指针重新定位★ 
+	QueuePtr newrear = (QueuePtr)malloc(sizeof(QNode));
+	if(!newrear) exit(OVERFLOW);
+	newrear->data = e; newrear->next = NULL;
+	Q->rear->next = newrear;
+	Q->rear = newrear;		//尾指针重新定位★ 
 	return OK; 
 }//EnQueue
 
 Status DeQueue(LinkQueue *Q,QElemType *e){
 	//若队列不空，则删除Q的队头元素，用e返回其值，并返回OK；
 	//否则返回ERROR 
-	if(Q->front != Q->rare){
+	if(Q->front != Q->rear){
 		QueuePtr p = Q->front->next;
 		Q->front->next = p->next;
-		if(p == Q->rare) Q->rare = Q->front;	//队列中最后一个元素被删后，队列尾指针重新定位★ 
+		if(p == Q->rear) Q->rear = Q->front;	//队列中最后一个元素被删后，队列尾指针重新定位★ 
 		*e = p->data;
 		free(p);
 		return OK;

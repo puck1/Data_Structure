@@ -23,13 +23,13 @@ int main(){
 	}
 	printf("此时队列Q中有 %d 个元素，从队首到队尾元素依次为：",QueueLength(Q));
 	QueueTraverse(Q,print); printf("\n");
-	DeQueue(&Q,&e); GetHead(Q,&tmp);
+	DeQueue(&Q,&e); GetQHead(Q,&tmp);
 	printf("删除队头元素 %d 后，新的队头元素为 %d \n",e,tmp);
 	printf("插入元素100为Q的新的队尾元素后，");  EnQueue(&Q,100);
 	printf("此时队列Q中有 %d 个元素，从队首到队尾元素依次为：",QueueLength(Q));
 	QueueTraverse(Q,print); printf("\n");
 	printf("测试完成...");
 	ClearQueue(&Q); if(QueueEmpty(Q)) printf("队列Q已置空...\n");
-	DestroyQueue(&Q); if((!Q.front)&&(!Q.rare)&&(!Q.base)) printf("队列Q已被销毁...\n");
+	DestroyQueue(&Q); if((!Q.front)&&(!Q.rear)&&(!Q.base)) printf("队列Q已被销毁...\n");
 	return 0;
 }//队列的循环顺序表示与实现
