@@ -4,83 +4,83 @@
 #include <time.h>
 #include "status.h"
 
-#define max_durtime 	30		//°ìÀíÒµÎñËùĞè×î³¤Ê±¼ä
-#define max_intertime	10		//¿Í»§µ½À´µÄ×î³¤Ê±¼ä¼ä¸ô 
+#define max_durtime 	30		//åŠç†ä¸šåŠ¡æ‰€éœ€æœ€é•¿æ—¶é—´
+#define max_intertime	10		//å®¢æˆ·åˆ°æ¥çš„æœ€é•¿æ—¶é—´é—´éš” 
 
-#define open_hour 	8		//¿ªÃÅÊ±¿Ì 
+#define open_hour 	8		//å¼€é—¨æ—¶åˆ» 
 #define open_min 	0
-#define close_hour 	18		//¹ØÃÅÊ±¿Ì 
+#define close_hour 	18		//å…³é—¨æ—¶åˆ» 
 #define close_min 	0 
 
 typedef enum {
 	new_arr,leave_1,leave_2,leave_3,leave_4
-}EventType;		//ÊÂ¼şÀàĞÍ£¬°üÀ¨ĞÂ¿Í»§µ½´ïÒÔ¼°ËÄ¸ö´°¿Ú¿Í»§Àë¿ª 
+}EventType;		//äº‹ä»¶ç±»å‹ï¼ŒåŒ…æ‹¬æ–°å®¢æˆ·åˆ°è¾¾ä»¥åŠå››ä¸ªçª—å£å®¢æˆ·ç¦»å¼€ 
 
 typedef struct {
 	int hour;
 	int minute;
-}TimeType;		//Ê±¿ÌÀàĞÍ 
+}TimeType;		//æ—¶åˆ»ç±»å‹ 
 
 typedef struct {
-	TimeType	OccurTime;		//ÊÂ¼ş·¢ÉúÊ±¿Ì 
-	EventType 	NType;			//ÊÂ¼şÀàĞÍ
-}Event,ElemType;				//ÊÂ¼şÀàĞÍ£¬ÓĞĞòÁ´±íLinkListµÄÊı¾İÔªËØÀàĞÍ 
+	TimeType	OccurTime;		//äº‹ä»¶å‘ç”Ÿæ—¶åˆ» 
+	EventType 	NType;			//äº‹ä»¶ç±»å‹
+}Event,ElemType;				//äº‹ä»¶ç±»å‹ï¼Œæœ‰åºé“¾è¡¨LinkListçš„æ•°æ®å…ƒç´ ç±»å‹ 
 
 #include "..\Linear_List\ExtendedLinkList.h"
 
-typedef LinkList EventList;		//ÊÂ¼şÁ´±íÀàĞÍ£¬¶¨ÒåÎªÓĞĞòÁ´±í
+typedef LinkList EventList;		//äº‹ä»¶é“¾è¡¨ç±»å‹ï¼Œå®šä¹‰ä¸ºæœ‰åºé“¾è¡¨
 
 typedef struct {
-	int Numbering;				//¿Í»§±àºÅ 
-	TimeType ArrialTime;		//µ½´ïÊ±¿Ì 
-	int Duration;				//°ìÀíÊÂÎñËùĞèÊ±¼ä
-}QElemType;						//¶ÓÁĞµÄÊı¾İÔªËØÀàĞÍ
+	int Numbering;				//å®¢æˆ·ç¼–å· 
+	TimeType ArrialTime;		//åˆ°è¾¾æ—¶åˆ» 
+	int Duration;				//åŠç†äº‹åŠ¡æ‰€éœ€æ—¶é—´
+}QElemType;						//é˜Ÿåˆ—çš„æ•°æ®å…ƒç´ ç±»å‹
 
 #include "LinkQueue.h"
 
-// - - - - - ³ÌĞòÖĞÓÃµ½µÄÖ÷Òª±äÁ¿ - - - - -  
-TimeType 	CurTime; 			//µ±Ç°Ê±¿Ì 
-TimeType	CloseTime;			//¹ØÃÅÊ±¿Ì 
-EventList 	ev;					//ÊÂ¼ş±í 
-Event 		en;					//ÊÂ¼ş 
-LinkQueue 	q[5];				//4¸ö¿Í»§¶ÓÁĞ
-QElemType customer;				//¿Í»§¼ÇÂ¼
-int TotalTime,CustomerNum;		//ÀÛ¼Æ¿Í»§¶ºÁôÊ±¼ä£¬¿Í»§Êı
+// - - - - - ç¨‹åºä¸­ç”¨åˆ°çš„ä¸»è¦å˜é‡ - - - - -  
+TimeType 	CurTime; 			//å½“å‰æ—¶åˆ» 
+TimeType	CloseTime;			//å…³é—¨æ—¶åˆ» 
+EventList 	ev;					//äº‹ä»¶è¡¨ 
+Event 		en;					//äº‹ä»¶ 
+LinkQueue 	q[5];				//4ä¸ªå®¢æˆ·é˜Ÿåˆ—
+QElemType customer;				//å®¢æˆ·è®°å½•
+int TotalTime,CustomerNum;		//ç´¯è®¡å®¢æˆ·é€—ç•™æ—¶é—´ï¼Œå®¢æˆ·æ•°
 
-// - - - - - Ôö²¹µÄ»ù±¾º¯Êı - - - - -  
+// - - - - - å¢è¡¥çš„åŸºæœ¬å‡½æ•° - - - - -  
 Status OrderInsert(LinkList *L,ElemType e,int (*compare)(TimeType,TimeType)){
-	//°´Ê±¼äÓĞĞòÅĞ¶¨º¯Êıcompare()µÄÔ¼¶¨£¬½«ÖµÎªeµÄ½áµã²åÈëµ½ÓĞĞòÁ´±íLµÄÊÊµ±Î»ÖÃÉÏ
+	//æŒ‰æ—¶é—´æœ‰åºåˆ¤å®šå‡½æ•°compare()çš„çº¦å®šï¼Œå°†å€¼ä¸ºeçš„ç»“ç‚¹æ’å…¥åˆ°æœ‰åºé“¾è¡¨Lçš„é€‚å½“ä½ç½®ä¸Š
 	Link p = L->head->next;
 	Link s;
 	while(p){
-		if((*compare)(p->data.OccurTime,e.OccurTime) > 0){	//Ñ°ÕÒ±ÈeÍí·¢ÉúµÄµÚÒ»¸öÊÂ¼ş
+		if((*compare)(p->data.OccurTime,e.OccurTime) > 0){	//å¯»æ‰¾æ¯”eæ™šå‘ç”Ÿçš„ç¬¬ä¸€ä¸ªäº‹ä»¶
 			if(!MakeNode(&s,e)) return ERROR;
-			InsBefore(L,&p,s);		//½«e²åÈëµ½¸ÃÊÂ¼şÖ®Ç°
+			InsBefore(L,&p,s);		//å°†eæ’å…¥åˆ°è¯¥äº‹ä»¶ä¹‹å‰
 			return OK;
 		}
 		p = p->next;
 	}
 	if(!MakeNode(&s,e)) return ERROR;
-	Append(L,s); return OK;			//Èç¹ûÃ»ÓĞ±ÈeÍí·¢ÉúµÄÊÂ¼ş£¬Ôò²åÈëµ½Ä©Î²
+	Append(L,s); return OK;			//å¦‚æœæ²¡æœ‰æ¯”eæ™šå‘ç”Ÿçš„äº‹ä»¶ï¼Œåˆ™æ’å…¥åˆ°æœ«å°¾
 }//OrderInsert
 
 Status DelFirst_L(LinkList *L,Event *e){
-	//É¾³ıÁ´±íLÖĞµÚÒ»¸ö½áµã²¢ÒÔq·µ»Ø
+	//åˆ é™¤é“¾è¡¨Lä¸­ç¬¬ä¸€ä¸ªç»“ç‚¹å¹¶ä»¥qè¿”å›
 	Link q;
 	if(!DelFirst(L->head,&q)) return ERROR;
-	if(q == L->tail) L->tail = L->head;		//É¾³ıµÄÊÇÎ²½áµã 
+	if(q == L->tail) L->tail = L->head;		//åˆ é™¤çš„æ˜¯å°¾ç»“ç‚¹ 
 	--L->len;
 	*e = q->data;
 	return OK;
 }//DelFirst_L
 
-//- - - - - Ê±¼äÏà¹Øº¯ÊıËã·¨ËµÃ÷ - - - - - 
+//- - - - - æ—¶é—´ç›¸å…³å‡½æ•°ç®—æ³•è¯´æ˜ - - - - - 
 TimeType SetTime(TimeType time,int min){
-	//¼ÆËã¾­¹ıÈô¸É·ÖÖÓºóµÄÊ±¿Ì
+	//è®¡ç®—ç»è¿‡è‹¥å¹²åˆ†é’Ÿåçš„æ—¶åˆ»
 	TimeType result;
 	result.hour = time.hour;
 	result.minute = time.minute + min;
-	if(result.minute >= 60){		//·ÖÖÓÊıÒç³ö£¬½øÎ» 
+	if(result.minute >= 60){		//åˆ†é’Ÿæ•°æº¢å‡ºï¼Œè¿›ä½ 
 		result.hour += result.minute / 60;
 		result.minute %= 60;
 	}
@@ -88,12 +88,12 @@ TimeType SetTime(TimeType time,int min){
 }//SetTime
 
 TimeType GetFirstTime(EventList e){
-	//·µ»ØÊÂ¼şÁ´±íÖĞµÚÒ»¸öÊÂ¼şµÄ·¢ÉúÊ±¿Ì£¬Á´±íÖĞ±ØĞëÓĞÊÂ¼ş 
+	//è¿”å›äº‹ä»¶é“¾è¡¨ä¸­ç¬¬ä¸€ä¸ªäº‹ä»¶çš„å‘ç”Ÿæ—¶åˆ»ï¼Œé“¾è¡¨ä¸­å¿…é¡»æœ‰äº‹ä»¶ 
 	return e.head->next->data.OccurTime;
 }//GetFirstTime
 
 int CmpTime(TimeType a,TimeType b){
-	//±È½ÏÁ½¸öÊ±¿ÌµÄÏÈºó£¬²¢·µ»Ø-1»ò0»òÕß1
+	//æ¯”è¾ƒä¸¤ä¸ªæ—¶åˆ»çš„å…ˆåï¼Œå¹¶è¿”å›-1æˆ–0æˆ–è€…1
 	int ret;
 	if(a.hour < b.hour) ret = -1;
 	else if(a.hour > b.hour) ret = 1;
@@ -104,14 +104,14 @@ int CmpTime(TimeType a,TimeType b){
 }//cmp
 
 int StayTime(){
-	//¼ÆËã²¢·µ»Øµ±Ç°¹Ë¿ÍµÄÍ£ÁôÊ±¼ä£¬ÒÔ·ÖÖÓÎªµ¥Î»
+	//è®¡ç®—å¹¶è¿”å›å½“å‰é¡¾å®¢çš„åœç•™æ—¶é—´ï¼Œä»¥åˆ†é’Ÿä¸ºå•ä½
 	return((CurTime.hour - customer.ArrialTime.hour) * 60 
 			+ CurTime.minute - customer.ArrialTime.minute);
 }//StayTime
 
 void TimePass(){
-	//Ê±¼äÁ÷ÊÅ¹ı³Ì
-	if(CurTime.minute == 59){		//½øÎ» 
+	//æ—¶é—´æµé€è¿‡ç¨‹
+	if(CurTime.minute == 59){		//è¿›ä½ 
 		CurTime.minute = 0;
 		++CurTime.hour;
 	}
@@ -119,47 +119,47 @@ void TimePass(){
 }//TimePass
 
 void OpenForDay(){
-	//³õÊ¼»¯²Ù×÷£¬ÒøĞĞ¿ªÃÅÓªÒµ 
+	//åˆå§‹åŒ–æ“ä½œï¼Œé“¶è¡Œå¼€é—¨è¥ä¸š 
 	int firstinter;
-	TotalTime = 0; CustomerNum = 0;				//³õÊ¼»¯ÀÛ¼ÆÊ±¼äºÍ¿Í»§ÊıÎª0 
+	TotalTime = 0; CustomerNum = 0;				//åˆå§‹åŒ–ç´¯è®¡æ—¶é—´å’Œå®¢æˆ·æ•°ä¸º0 
 	CurTime.hour = open_hour;
-	CurTime.minute = open_min;					//Éè¶¨¿ªÃÅÊ±¼äÎªµ±Ç°Ê±¼ä  
+	CurTime.minute = open_min;					//è®¾å®šå¼€é—¨æ—¶é—´ä¸ºå½“å‰æ—¶é—´  
 	CloseTime.hour = close_hour;
-	CloseTime.minute = close_min; 				//Éè¶¨¹ØÃÅÊ±¼ä 
-	InitList(&ev); 								//³õÊ¼»¯ÊÂ¼şÁ´±íÎª¿Õ±í 
-	firstinter = rand() % max_intertime + 1;	//Ëæ»ú»ñµÃµÚÒ»¸ö¿Í»§µ½´ïµÄÊ±¼ä¼ä¸ô 
+	CloseTime.minute = close_min; 				//è®¾å®šå…³é—¨æ—¶é—´ 
+	InitList(&ev); 								//åˆå§‹åŒ–äº‹ä»¶é“¾è¡¨ä¸ºç©ºè¡¨ 
+	firstinter = rand() % max_intertime + 1;	//éšæœºè·å¾—ç¬¬ä¸€ä¸ªå®¢æˆ·åˆ°è¾¾çš„æ—¶é—´é—´éš” 
 	en.OccurTime = SetTime(CurTime,firstinter); 
-	en.NType = new_arr;							//Éè¶¨µÚÒ»¸ö¿Í»§µ½´ïÊÂ¼ş 
-	OrderInsert(&ev,en,&CmpTime); 				//²åÈëÊÂ¼ş±í 
+	en.NType = new_arr;							//è®¾å®šç¬¬ä¸€ä¸ªå®¢æˆ·åˆ°è¾¾äº‹ä»¶ 
+	OrderInsert(&ev,en,&CmpTime); 				//æ’å…¥äº‹ä»¶è¡¨ 
 	int i;
-	for(i=1;i<=4;++i) InitQueue(&q[i]);			//ÖÃ¿Õ¶ÓÁĞ 
+	for(i=1;i<=4;++i) InitQueue(&q[i]);			//ç½®ç©ºé˜Ÿåˆ— 
 }//OpenForDay
 
 Status EventDrived(EventList el){
-	//ÊÂ¼şÇı¶¯£¬ÅĞ¶Ïµ±Ç°Ê±¿ÌÊÇ·ñÓĞÊÂ¼ş·¢Éú
-	if(!el.head->next) return FALSE;			//ÊÂ¼ş±íÖĞÒÑÎŞÊÂ¼ş 
-	if(!CmpTime(GetFirstTime(el),CurTime))		//ÊÂ¼şÔÚµ±Ç°Ê±¿Ì·¢Éú 
+	//äº‹ä»¶é©±åŠ¨ï¼Œåˆ¤æ–­å½“å‰æ—¶åˆ»æ˜¯å¦æœ‰äº‹ä»¶å‘ç”Ÿ
+	if(!el.head->next) return FALSE;			//äº‹ä»¶è¡¨ä¸­å·²æ— äº‹ä»¶ 
+	if(!CmpTime(GetFirstTime(el),CurTime))		//äº‹ä»¶åœ¨å½“å‰æ—¶åˆ»å‘ç”Ÿ 
 		return TRUE;
 	return FALSE;
 }//EventDrived
 
 void CustomerArrived(){
-	//´¦Àí¿Í»§µ½´ïÊÂ¼ş£¬en.NType = new_arr¡£
+	//å¤„ç†å®¢æˆ·åˆ°è¾¾äº‹ä»¶ï¼Œen.NType = new_arrã€‚
 	int intertime; 
 	int i;
 	++CustomerNum;
-	customer.Duration = rand() % max_durtime + 1;	//µ±Ç°¹Ë¿Í°ìÀíÊÂÎñÓÃÊ± 
-	customer.ArrialTime = CurTime;					//µ±Ç°Ê±¿Ì¼´Îª¹Ë¿ÍµÄµ½´ïÊ±¿Ì 
-	customer.Numbering = CustomerNum;				//¹Ë¿Í±àºÅ 
-	i = Minimum(q);									//Çó³¤¶È×î¶Ì¶ÓÁĞ 
+	customer.Duration = rand() % max_durtime + 1;	//å½“å‰é¡¾å®¢åŠç†äº‹åŠ¡ç”¨æ—¶ 
+	customer.ArrialTime = CurTime;					//å½“å‰æ—¶åˆ»å³ä¸ºé¡¾å®¢çš„åˆ°è¾¾æ—¶åˆ» 
+	customer.Numbering = CustomerNum;				//é¡¾å®¢ç¼–å· 
+	i = Minimum(q);									//æ±‚é•¿åº¦æœ€çŸ­é˜Ÿåˆ— 
 	EnQueue(&q[i],customer);
-	intertime = rand() % max_intertime + 1;		//ÓëÏÂÒ»¹Ë¿Íµ½´ïÊ±¿ÌµÄ¼ä¸ô
-	en.OccurTime = SetTime(CurTime,intertime);	//ÏÂÒ»¹Ë¿Íµ½´ïµÄÊ±¿Ì 
-	if(CmpTime(en.OccurTime,CloseTime) == -1){	//ÒøĞĞÉĞÎ´¹ØÃÅ£¬²åÈëÊÂ¼ş±í 
+	intertime = rand() % max_intertime + 1;		//ä¸ä¸‹ä¸€é¡¾å®¢åˆ°è¾¾æ—¶åˆ»çš„é—´éš”
+	en.OccurTime = SetTime(CurTime,intertime);	//ä¸‹ä¸€é¡¾å®¢åˆ°è¾¾çš„æ—¶åˆ» 
+	if(CmpTime(en.OccurTime,CloseTime) == -1){	//é“¶è¡Œå°šæœªå…³é—¨ï¼Œæ’å…¥äº‹ä»¶è¡¨ 
 		en.NType = new_arr;
 		OrderInsert(&ev,en,&CmpTime);
 	}
-	if(QueueLength(q[i]) == 1){		//Éè¶¨µÚi¶ÓÁĞµÄÒ»¸öÀë¿ªÊ±¿Ì²¢²åÈëÊÂ¼ş±í 
+	if(QueueLength(q[i]) == 1){		//è®¾å®šç¬¬ié˜Ÿåˆ—çš„ä¸€ä¸ªç¦»å¼€æ—¶åˆ»å¹¶æ’å…¥äº‹ä»¶è¡¨ 
 		en.NType =  i;
 		en.OccurTime = SetTime(CurTime,customer.Duration);
 		OrderInsert(&ev,en,&CmpTime);
@@ -167,10 +167,10 @@ void CustomerArrived(){
 }//CustomerArrived
 
 void CustomerDeparture(){
-	//´¦Àí¿Í»§Àë¿ªÊÂ¼ş£¬en.NType > 0¡£ 
-	int i = en.NType; DeQueue(&q[i],&customer);		//É¾³ıµÚi¶ÓÁĞµÄÅÅÍ·¿Í»§ 
-	TotalTime += StayTime();	//ÀÛ¼Æ¿Í»§¶ºÁôÊ±¼ä 
-	if(!QueueEmpty(q[i])){		//Éè¶¨µÚi¶ÓÁĞµÄÒ»¸öÀë¿ªÊÂ¼ş²¢²åÈëÊÂ¼ş±í 
+	//å¤„ç†å®¢æˆ·ç¦»å¼€äº‹ä»¶ï¼Œen.NType > 0ã€‚ 
+	int i = en.NType; DeQueue(&q[i],&customer);		//åˆ é™¤ç¬¬ié˜Ÿåˆ—çš„æ’å¤´å®¢æˆ· 
+	TotalTime += StayTime();	//ç´¯è®¡å®¢æˆ·é€—ç•™æ—¶é—´ 
+	if(!QueueEmpty(q[i])){		//è®¾å®šç¬¬ié˜Ÿåˆ—çš„ä¸€ä¸ªç¦»å¼€äº‹ä»¶å¹¶æ’å…¥äº‹ä»¶è¡¨ 
 		GetQHead(q[i],&customer);
 		en.NType = i;
 		en.OccurTime = SetTime(CurTime,customer.Duration);
@@ -179,14 +179,14 @@ void CustomerDeparture(){
 }//CustomerDeparture 
 
 void CloseForDay(){
-	//¹ØÃÅÇåËã£¬¸ø³ö¹Ë¿ÍÍ£ÁôµÄÆ½¾ùÊ±¼ä 
+	//å…³é—¨æ¸…ç®—ï¼Œç»™å‡ºé¡¾å®¢åœç•™çš„å¹³å‡æ—¶é—´ 
 	printf("There are %d customers on the day.\n"
 			"The average time of staying is %.2f minutes.\n",
-			CustomerNum,(float)TotalTime/CustomerNum);		//Æ½¾ùÊ±¼ä×ª»»ÎªfloatĞÍ²¢±£ÁôÁ½Î»Ğ¡Êı 
+			CustomerNum,(float)TotalTime/CustomerNum);		//å¹³å‡æ—¶é—´è½¬æ¢ä¸ºfloatå‹å¹¶ä¿ç•™ä¸¤ä½å°æ•° 
 }//CloseForDay
 
 int Minimum(LinkQueue *q){
-	//Ñ°ÕÒ³¤¶È×î¶Ì¶ÓÁĞ£¬Èç¹û¶à¸ö¶ÓÁĞ³¤¶È¶¼Îª×î¶Ì£¬·µ»ØĞòºÅ×îĞ¡µÄ¶ÓÁĞºÅ 
+	//å¯»æ‰¾é•¿åº¦æœ€çŸ­é˜Ÿåˆ—ï¼Œå¦‚æœå¤šä¸ªé˜Ÿåˆ—é•¿åº¦éƒ½ä¸ºæœ€çŸ­ï¼Œè¿”å›åºå·æœ€å°çš„é˜Ÿåˆ—å· 
 	int len = QueueLength(q[1]);
 	int i=1,j;
 	for(j=4;j>=2;--j){
@@ -197,19 +197,19 @@ int Minimum(LinkQueue *q){
 }//Minimum
 
 void ShowBank(){
-	//½«µ±Ç°Ê±¿Ì¼°ÒøĞĞ¶ÓÁĞÇé¿öË¢ĞÂ²¢´òÓ¡³öÀ´ 
+	//å°†å½“å‰æ—¶åˆ»åŠé“¶è¡Œé˜Ÿåˆ—æƒ…å†µåˆ·æ–°å¹¶æ‰“å°å‡ºæ¥ 
 	int i;
 	QueuePtr p;
 	system("cls");
-	printf("Current time£º %02d:%02d\n",CurTime.hour,CurTime.minute);	//%0nd±íÊ¾nÎ»ÕûÊı£¬²»×ãÎ»²¹0 
+	printf("Current timeï¼š %02d:%02d\n",CurTime.hour,CurTime.minute);	//%0ndè¡¨ç¤ºnä½æ•´æ•°ï¼Œä¸è¶³ä½è¡¥0 
 	for(i=1;i<=4;++i){
 		p = q[i].front;
 		while(p){
 			if(p == q[i].front)
-				printf("Counter%d¡ñ:",i);
+				printf("Counter%dâ—:",i);
 			else
 				printf("<%03d>",p->data.Numbering);
-			if(p == q[i].rear) printf("\n");	//Óö¶ÓÁĞÄ©Î²»»ĞĞ 
+			if(p == q[i].rear) printf("\n");	//é‡é˜Ÿåˆ—æœ«å°¾æ¢è¡Œ 
 			p = p->next;
 		}
 	}
@@ -217,25 +217,24 @@ void ShowBank(){
 }//Show
 
 void Bank_Simulation(){
-	//ÒøĞĞÒµÎñÄ£Äâ£¬Í³¼ÆÒ»ÌìÄÚ¿Í»§ÔÚÒøĞĞ¶ºÁôµÄÆ½¾ùÊ±¼ä¡£
-	srand((unsigned)time(NULL));	//ÓÃÏµÍ³Ê±¼ä×öËæ»úÊıÖÖ×Ó
-	OpenForDay();					//³õÊ¼»¯
+	//é“¶è¡Œä¸šåŠ¡æ¨¡æ‹Ÿï¼Œç»Ÿè®¡ä¸€å¤©å†…å®¢æˆ·åœ¨é“¶è¡Œé€—ç•™çš„å¹³å‡æ—¶é—´ã€‚
+	srand((unsigned)time(NULL));	//ç”¨ç³»ç»Ÿæ—¶é—´åšéšæœºæ•°ç§å­
+	OpenForDay();					//åˆå§‹åŒ–
 	for(CurTime;(CmpTime(CurTime,CloseTime)!=1)||(!ListEmpty(ev));TimePass()){
-									//µ½´ï¹ØÃÅÊ±¿Ìºó¼ÌĞø´¦ÀíÀë¿ªÊÂ¼ş
-		while(EventDrived(ev)){		//ÊÂ¼şÇı¶¯
-			DelFirst_L(&ev,&en);	//ÕªÏÂµÚÒ»¸öµ±Ç°Ê±¿Ì·¢ÉúµÄÊÂ¼ş 
+									//åˆ°è¾¾å…³é—¨æ—¶åˆ»åç»§ç»­å¤„ç†ç¦»å¼€äº‹ä»¶
+		while(EventDrived(ev)){		//äº‹ä»¶é©±åŠ¨
+			DelFirst_L(&ev,&en);	//æ‘˜ä¸‹ç¬¬ä¸€ä¸ªå½“å‰æ—¶åˆ»å‘ç”Ÿçš„äº‹ä»¶ 
 			switch(en.NType){
-				case new_arr: CustomerArrived(); break;		//´¦Àí¿Í»§µ½´ïÊÂ¼ş 
-				default: CustomerDeparture(); break;		//´¦Àí¿Í»§Àë¿ªÊÂ¼ş 
+				case new_arr: CustomerArrived(); break;		//å¤„ç†å®¢æˆ·åˆ°è¾¾äº‹ä»¶ 
+				default: CustomerDeparture(); break;		//å¤„ç†å®¢æˆ·ç¦»å¼€äº‹ä»¶ 
 			}
 		}
 		ShowBank();
 	}
-	CloseForDay();		//¼ÆËã²¢Êä³öÆ½¾ù¶ºÁôÊ±¼ä
+	CloseForDay();		//è®¡ç®—å¹¶è¾“å‡ºå¹³å‡é€—ç•™æ—¶é—´
 }//Bank_Simulation
 
 int main(){
 	Bank_Simulation();
 	return 0;
-}//ÀëÉ¢ÊÂ¼şÄ£Äâ_ÒøĞĞÒµÎñ 
-
+}//ç¦»æ•£äº‹ä»¶æ¨¡æ‹Ÿ_é“¶è¡Œä¸šåŠ¡ 
