@@ -5,7 +5,7 @@
 #include "status.h"
 
 #define max_durtime 	30		//办理业务所需最长时间
-#define max_intertime	10		//客户到来的最长时间间隔 
+#define max_intertime	5		//客户到来的最长时间间隔 
 
 #define open_hour 	8		//开门时刻 
 #define open_min 	0
@@ -47,7 +47,7 @@ LinkQueue 	q[5];				//4个客户队列
 QElemType customer;				//客户记录
 int TotalTime,CustomerNum;		//累计客户逗留时间，客户数
 
-// - - - - - 增补的基本函数 - - - - -  
+// - - - - - 增补的基本函数的算法描述 - - - - -  
 Status OrderInsert(LinkList *L,ElemType e,int (*compare)(TimeType,TimeType)){
 	//按时间有序判定函数compare()的约定，将值为e的结点插入到有序链表L的适当位置上
 	Link p = L->head->next;
@@ -74,7 +74,7 @@ Status DelFirst_L(LinkList *L,Event *e){
 	return OK;
 }//DelFirst_L
 
-//- - - - - 时间相关函数算法说明 - - - - - 
+//- - - - - 时间相关操作的算法描述 - - - - - 
 TimeType SetTime(TimeType time,int min){
 	//计算经过若干分钟后的时刻
 	TimeType result;
@@ -118,6 +118,7 @@ void TimePass(){
 	else ++CurTime.minute;
 }//TimePass
 
+// - - - - - 模拟相关操作的算法描述 - - - - - 
 void OpenForDay(){
 	//初始化操作，银行开门营业 
 	int firstinter;
