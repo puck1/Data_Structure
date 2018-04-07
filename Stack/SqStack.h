@@ -14,7 +14,6 @@ typedef struct{
 	SElemType *top;		//栈顶指针 
 	int stacksize;		//当前已分配的存储空间，以元素为单位 
 }SqStack;
-	//- - - - - - - - - - - - - - - - - - - 
 
 	//- - - - - 基本操作的算法描述 - - - - - 
 Status InitStack(SqStack *S){
