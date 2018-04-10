@@ -310,7 +310,7 @@ Status PostOrderTraverse_Recur(BiTree T,Status (*Visit)(TElemType)){
 	else return OK;
 }//PostOrderTraverse_Recur
 
-Status PostOrderTraverse_NRecur(BiTree T,Status (*Visit)(TElemType)){
+Status PostOrderTraverse_NRecur(BiTree T,Status (*Visit)(TElemType)){	//★
 	//后序遍历T的非递归算法，对每个结点调用函数Visit一次且仅一次。
 	//一旦Visit()失败，则操作失败。
 	BiTNode *cur = T , *last = T;	//cur指示当前检查访问的结点，last指示上次访问的结点
