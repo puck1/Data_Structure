@@ -178,7 +178,7 @@ Status InsertChild(PTree *T,int p,int i,PTree c){
     int cnt;                            //记录结点的孩子数目
     if(Root(c) != ' '){
         InsertNode(T,p,i,Root(c));      //插入c的根结点
-        while((*T).nodes[j].parent < p) ++j;
+        while((*T).nodes[j].parent < p && (*T).nodes[j].parent != -1) ++j;
         j += i - 1;                     //计算插入位置下标
         tmpnode[q++] = j;               //存储插入位置
         for (int k = 1; k < c.n; k++){
