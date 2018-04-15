@@ -13,8 +13,8 @@
 typedef TElemType SqBiTree[MAX_TREE_SIZE];	//0号单元存储根节点
 
 typedef struct {
-	int level;		//结点所在层次（从1开始）
-	int order;		//结点在层次的序号（从1开始）
+	int level;		//结点所在层次（从0开始）
+	int order;		//结点在层次的序号（从0开始）
 }Position;			//完全二叉树中结点位置
 
 // - - - - - 基本操作的算法描述 - - - - -
