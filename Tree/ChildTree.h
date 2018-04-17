@@ -273,7 +273,7 @@ Status DeleteChild(CTree *T,int p,int i){
 	q = s->child;
     (*T).nodes[q].data = ' ';                   //将要删除的结点都置为“空”
 
-	//删除双亲的孩子链表中结点
+	//删除双亲的孩子链表中根结点
 	par = (*T).nodes[q].parent;
 	ChildPtr priorc,nextc;
 	priorc = nextc = (*T).nodes[par].firstchild;
