@@ -108,7 +108,8 @@ void DeThreadTreeBody(BiThrTree T){
     else DeThreadTreeBody(T->lchild);
     if(T->RTag == Thread) T->rchild = NULL;
     else DeThreadTreeBody(T->rchild);
-}
+}//DeThreadTreeBody
+
 Status DestroyTreeBody(BiThrTree *T){
     //递归摧毁树体
     if((*T)->LTag == Link) DestroyTreeBody(&(*T)->lchild); //递归摧毁左孩子

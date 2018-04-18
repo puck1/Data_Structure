@@ -100,7 +100,7 @@ TElemType Parent(BiTree T,BiTNode *p){
 	BiTree tmp[100];
 	int i = 0,j = 0;
 	tmp[j++] = T;
-	while(i<j){		//层序遍历寻找双亲节点
+	while(i < j){		//层序遍历寻找双亲节点
 		if(tmp[i]->lchild==p || tmp[i]->rchild==p)
 			return tmp[i]->data;
 		else{
@@ -344,7 +344,7 @@ Status LevelOrderTraverse(BiTree T,Status (*Visit)(TElemType)){	//★
 	BiTree tmp[100];		//暂存要访问的结点指针
 	int i = 0,j = 0;
 	if(T) tmp[j++] = T;		//存入根指针
-	while(i<j){
+	while(i < j){
 		if(!(Visit(tmp[i]->data))) return ERROR;		//访问结点
 		if(tmp[i]->lchild) tmp[j++] = tmp[i]->lchild;	//存入当前访问结点的左孩子
 		if(tmp[i]->rchild) tmp[j++] = tmp[i]->rchild;	//存入当前访问结点的右孩子

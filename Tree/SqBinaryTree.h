@@ -181,7 +181,7 @@ Status LevelOrderTraverse(SqBiTree T,Status (*Visit)(TElemType)){
 	int i;
 	for(i=0;i<MAX_TREE_SIZE;++i){
 		if(T[i] != ' ')
-			printf("%c ",T[i]);
+			if(!Visit (T[i])) return ERROR;
 	}
 	return OK;
 }//LevelOrderTraverse

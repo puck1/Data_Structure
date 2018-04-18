@@ -20,6 +20,7 @@ int main(){
 
     printf("LevelOrderTraverse_T:");
     LevelOrderTraverse(T,PrintElement);     //层序遍历
+    printf("\n");
 
     printf("The depth of tree T is %d ,data of root is '%c'.\n",TreeDepth(T),Root(T));
     printf("Enter the order (start from 0 in level order)\n"
@@ -34,23 +35,23 @@ int main(){
     printf("Create tree c in level order(charater space means node is empty):\n");
     CreateTree(&c);                 //层序建立树c
     printf("LevelOrderTraverse_c:");
-    LevelOrderTraverse(c,PrintElement);
+    LevelOrderTraverse(c,PrintElement); printf("\n");
     printf("Insert tree c as 2nd child of tree T...\n");
     InsertChild(&T,0,2,c);          //插入子树
     printf("LevelOrderTraverse_T:");
-    LevelOrderTraverse(T,PrintElement);
+    LevelOrderTraverse(T,PrintElement); printf("\n");
 
     printf("Enter the order (start from 0 in level order) of the node \n"
             "whose child will be deleted, and the order of its child(from 1 on):");
     scanf("%d %d",&i,&j);
     DeleteChild(&T,i,j);            //删除子树
     printf("LevelOrderTraverse_T:");
-    LevelOrderTraverse(T,PrintElement);
+    LevelOrderTraverse(T,PrintElement); printf("\n");
 
     printf("Insert '@' as 2nd child of T's root...\n");
     InsertNode(&T,0,2,'@');         //插入结点
     printf("LevelOrderTraverse_T:");
-    LevelOrderTraverse(T,PrintElement);
+    LevelOrderTraverse(T,PrintElement); printf("\n");
 
     int clear = 1;
     ClearTree(&T);      //清空

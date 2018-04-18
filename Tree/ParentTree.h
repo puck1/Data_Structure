@@ -239,7 +239,6 @@ Status LevelOrderTraverse(PTree T,Status (*visit)(TElemType)){
     int i;
     for(i=T.r;i<T.n;++i)
         if(!visit(T.nodes[i].data)) return ERROR;
-    printf("\n");
     return OK;
 }//LevelOrderTraverse
 
