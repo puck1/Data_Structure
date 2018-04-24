@@ -1,5 +1,5 @@
 /** @workspace/General/string_p.h
- *  This file defines several functions to process string.
+ *  This file includes several functions to process string.
  */
 
 #ifndef STRING_P_H
