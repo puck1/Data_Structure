@@ -11,14 +11,12 @@ int main(){
 	int i,j,k;
 	AElemType e = 1;
 	printf("建立3*3*3三维数组A...\n");
-	for(i=0;i<A.bounds[0];++i){
-		for(j=0;j<A.bounds[1];++j){
+	for(i=0;i<A.bounds[0];++i)
+		for(j=0;j<A.bounds[1];++j)
 			for(k=0;k<A.bounds[2];++k){
 				Assign(&A,e,i,j,k);
 				++e;
 			}
-		}
-	}
 	printf("建立的数组A为："); 
 	PrintArray(A);
 	Value(A,&e,0,0,0); printf("A[0][0][0] = %d;\t",e);
