@@ -21,7 +21,7 @@ typedef struct ArcCell{
     InfoType    *info;  //该弧相关信息的指针
 }ArcCell,   AdjMatrix[MAX_VERTAX_NUM + 1][MAX_VERTAX_NUM + 1];
 typedef struct {
-    VertexType  vexs[MAX_VERTAX_NUM + 1];   //顶点向量
+    VertexType  vexs[MAX_VERTAX_NUM + 1];   //顶点向量,0号单元弃用
     AdjMatrix   arcs;                       //邻接矩阵
     int         vexnum,arcnum;              //图的当前顶点数和弧数
     GraphKind   kind;                       //图的种类标志
@@ -165,7 +165,7 @@ Status CreateUDN(MGraph *UDN){
 
 Status CreateGraph(MGraph *G){
     //采用数组（邻接矩阵）表示法，构造图G
-    printf("Enter the kind of Graph G (0->DG/1->DN/2->UDG/3->UDN):");
+    printf("Enter the kind of graph G (0->DG/1->DN/2->UDG/3->UDN):");
     scanf("%d",&(*G).kind);
     switch ((*G).kind){
         case  DG: return CreateDG(G);
