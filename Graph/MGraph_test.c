@@ -15,12 +15,14 @@ int main(){
     printf("Insert vertex '#' and '!' into graph...");
     if(InsertVex(&G,'#') && InsertVex(&G,'!')) printf("Succeeded!"); printf("\n");
     printf("InsertArc <@,!> and <@,#> and <!,#> into graph...");
-    if(InsertArc(&G,'@','!',5,"Hello world!") && InsertArc(&G,'@','#',10,"Good to see u!")
-                                            && InsertArc(&G,'!','#',15,"Good Night!"))
+
+    if(InsertArc(&G,'@','!',5,1,"Hello world!") && InsertArc(&G,'@','#',10,1,"Good to see u!")
+                                            && InsertArc(&G,'!','#',15,1,"Good Night!"))
         printf("Succeeded!"); printf("\n");
-    //    if(InsertArc(&G,'@','!') && InsertArc(&G,'@','#')
-    //                                         && InsertArc(&G,'!','#'))
-    //     printf("Succeeded!"); printf("\n");
+
+    // if(InsertArc(&G,'@','!',0) && InsertArc(&G,'@','#',0) && InsertArc(&G,'!','#',0))
+    // printf("Succeeded!"); printf("\n");
+
     printf("Delete arc <@,!>...");
     if(DeleteArc(&G,'@','!')) printf("Succeeded!"); printf("\n");
     printf("Delete vertrex '#' and '!'...");
@@ -30,4 +32,4 @@ int main(){
     DestroyGraph(&G);
     G.vexnum == 0 && G.arcnum == 0? printf("Graph is destroyed!\n"):printf("Graph isnot destroyed!\n");
     return 0;
-}
+}//MGraph_test

@@ -15,12 +15,14 @@ int main(int argc, char const *argv[]){
     printf("Insert vertex '#' and '!' into graph...");
     if(InsertVex(&G,'#') && InsertVex(&G,'!')) printf("Succeeded!"); printf("\n");
     printf("InsertArc <@,!> and <@,#> and <!,#> into graph...");
-    if(InsertArc(&G,'@','!',"Hello world!") && InsertArc(&G,'@','#',"Good to see u!")
-                                            && InsertArc(&G,'!','#',"Good Night!"))
-        printf("Succeeded!"); printf("\n");
-    //    if(InsertArc(&G,'@','!') && InsertArc(&G,'@','#')
-    //                                         && InsertArc(&G,'!','#'))
+
+    // if(InsertArc(&G,'@','!',1,"Hello world!") && InsertArc(&G,'@','#',1,"Good to see u!")
+    //                                         && InsertArc(&G,'!','#',1,"Good Night!"))
     //     printf("Succeeded!"); printf("\n");
+
+    if(InsertArc(&G,'@','!',0) && InsertArc(&G,'@','#',0) && InsertArc(&G,'!','#',0))
+    printf("Succeeded!"); printf("\n");
+
     printf("Delete arc <@,!>...");
     if(DeleteArc(&G,'@','!')) printf("Succeeded!"); printf("\n");
     printf("Delete vertrex '#' and '!'...");
@@ -30,4 +32,4 @@ int main(int argc, char const *argv[]){
     DestroyGraph(&G);
     G.vexnum == 0 && G.arcnum == 0? printf("Graph is destroyed!\n"):printf("Graph isnot destroyed!\n");
     return 0;
-}
+}//ALGraph_test

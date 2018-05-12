@@ -51,6 +51,7 @@ Status CreateDG(MGraph *DG){
         printf("No.%d:",k);
         scanf("%c%*c%c%*c",&v1,&v2);            //输入一条弧依附的顶点
         i = LocateVex(*DG,v1); j = LocateVex(*DG,v2);   //确定v1和v2在DG中位置
+        if(!i || !j) return ERROR;
         (*DG).arcs[i][j].adj = 1;               //建立弧<v1,v2>
         if(IncInfo){                            //若弧含有相关信息，则输入
             printf("Enter information (No longer than 20 chars):");
@@ -84,6 +85,7 @@ Status CreateDN(MGraph *DN){
         printf("No.%d:",k);
         scanf("%c%*c%c%*c%d%*c",&v1,&v2,&w);            //输入一条弧依附的顶点
         i = LocateVex(*DN,v1); j = LocateVex(*DN,v2);   //确定v1和v2在DN中位置
+        if(!i || !j) return ERROR;
         (*DN).arcs[i][j].adj = w;               //建立弧<v1,v2>
         if(IncInfo){                            //若弧含有相关信息，则输入
             printf("Enter information (No longer than 20 chars):");
@@ -116,6 +118,7 @@ Status CreateUDG(MGraph *UDG){
         printf("No.%d:",k);
         scanf("%c%*c%c%*c",&v1,&v2);            //输入一条边依附的顶点
         i = LocateVex(*UDG,v1); j = LocateVex(*UDG,v2); //确定v1和v2在UDG中位置
+        if(!i || !j) return ERROR;
         (*UDG).arcs[i][j].adj = 1;              //建立边<v1,v2>
         if(IncInfo){                            //若边含有相关信息，则输入
             printf("Enter information (No longer than 20 chars):");
@@ -150,6 +153,7 @@ Status CreateUDN(MGraph *UDN){
         printf("No.%d:",k);
         scanf("%c%*c%c%*c%d%*c",&v1,&v2,&w);    //输入一条边依附的顶点
         i = LocateVex(*UDN,v1); j = LocateVex(*UDN,v2); //确定v1和v2在UDN中位置
+        if(!i || !j) return ERROR;
         (*UDN).arcs[i][j].adj = w;              //建立边<v1,v2>
         if(IncInfo){                            //若边含有相关信息，则输入
             printf("Enter information (No longer than 20 chars):");
@@ -295,22 +299,27 @@ Status DeleteVex(MGraph *G,VertexType v){
 
 Status InsertArc(MGraph *G,VertexType v,VertexType w,...){
     //v和w是图G中两个顶点，在G中增添弧<v,w>，若G是无向的，则还增添对称弧<w,v>
+    //可变参数IncInfo指示弧中是否包含信息,在权值（若为网）之后输入
     int i = LocateVex(*G,v);
     int j = LocateVex(*G,w);
+    int IncInfo;
     int weight = 1;
     // char info[21];
     if(!i || !j) return ERROR;
+
     va_list ap;
     va_start(ap,w);
     if((*G).kind == DN || (*G).kind == UDN) weight = va_arg(ap,int);    //网
-    char *info = va_arg(ap,InfoType);     //弧信息
+    IncInfo = va_arg(ap,int); char *info = va_arg(ap,InfoType);         //弧信息
     va_end(ap);
+
     (*G).arcs[i][j].adj = weight;
-    if(info){
-         (*G).arcs[i][j].info = (InfoType *)malloc(sizeof(InfoType));
-         if(!(*G).arcs[i][j].info) exit(OVERFLOW);
-         *(*G).arcs[i][j].info = info;
+    if(IncInfo){
+        (*G).arcs[i][j].info = (InfoType *)malloc(sizeof(InfoType));
+        if(!(*G).arcs[i][j].info) exit(OVERFLOW);
+        *(*G).arcs[i][j].info = info;
     }
+    else (*G).arcs[i][j].info = NULL;
     if((*G).kind == UDG || (*G).kind == UDN) (*G).arcs[j][i] = (*G).arcs[i][j];
     ++(*G).arcnum;
     return OK;

@@ -51,6 +51,7 @@ Status CreateDG(ALGraph *DG){
         printf("No.%d:",k);
         scanf("%c%*c%c%*c",&v1,&v2);               //输入一条弧依附的顶点
         i = LocateVex(*DG,v1); j = LocateVex(*DG,v2);   //确定v1和v2在DG中位置
+        if(!i || !j) return ERROR;
         a1 = (*DG).vertices[i].firstarc;
         while (a1 && a1->nextarc) a1 = a1->nextarc;
         a2 = (ArcNode *)malloc(sizeof(ArcNode));        //建立弧<v1,v2>
@@ -87,10 +88,11 @@ Status CreateUDG(ALGraph *UDG){
     printf("Enter each arc's tail and head separated by delimitador:\n");
     for (k = 1; k <= (*UDG).arcnum; ++k){        //建立表结点
         printf("No.%d:",k);
-        scanf("%c%*c%c",&v1,&v2);               //输入一条边依附的顶点
+        scanf("%c%*c%c%*c",&v1,&v2);               //输入一条边依附的顶点
         i = LocateVex(*UDG,v1); j = LocateVex(*UDG,v2);   //确定v1和v2在UDG中位置
+        if(!i || !j) return ERROR;
         a1 = (*UDG).vertices[i].firstarc;
-        while (a1) a1 = a1->nextarc;
+        while (a1 && a1->nextarc) a1 = a1->nextarc;
         a2 = (ArcNode *)malloc(sizeof(ArcNode));        //建立边<v1,v2>
         if(!a2) exit(OVERFLOW);
         a2->adjvex = j; a2->nextarc = NULL;
@@ -105,7 +107,7 @@ Status CreateUDG(ALGraph *UDG){
         else (*UDG).vertices[i].firstarc = a2;   //是第一条边
 
         a1 = (*UDG).vertices[j].firstarc;
-        while (a1) a1 = a1->nextarc;
+        while (a1 && a1->nextarc) a1 = a1->nextarc;
         a3 = (ArcNode *)malloc(sizeof(ArcNode));        //建立边<v2,v1>
         if(!a3) exit(OVERFLOW);
         a3->adjvex = i; a3->nextarc = NULL; a3->info = a2->info;
@@ -129,8 +131,9 @@ Status CreateGraph(ALGraph *G){
 
 Status DestroyGraph(ALGraph *G){
     //销毁图G
+    int i;
     ArcNode *p,*q,*r;
-    for (int i = 1; i <= (*G).vexnum; ++i){
+    for (i = 1; i <= (*G).vexnum; ++i){
         p = (*G).vertices[i].firstarc;
         while (p){
             q = p->nextarc;
@@ -212,17 +215,17 @@ Status InsertVex(ALGraph *G,VertexType v){
 Status DeleteVex(ALGraph *G,VertexType v){
     //v和图G中顶点有相同特征，在图G中删除顶点v及其相关的弧
     int i = LocateVex(*G,v);
-    int k;
+    int j;
     ArcNode *p,*q;
     if(i == 0) return ERROR;
-    for (k = 1; k <= (*G).vexnum; ++k){
-        p = q = (*G).vertices[k].firstarc;
+    for (j = 1; j <= (*G).vexnum; ++j){
+        p = q = (*G).vertices[j].firstarc;
         while (q){
             if(q->adjvex == i){     //删除以顶点v为头的弧
                 if(q->info) free(q->info);
-                if(q == (*G).vertices[k].firstarc){
-                    (*G).vertices[k].firstarc = q->nextarc;
-                    free(q); q = (*G).vertices[k].firstarc;
+                if(q == (*G).vertices[j].firstarc){
+                    (*G).vertices[j].firstarc = q->nextarc;
+                    free(q); q = (*G).vertices[j].firstarc;
                 }
                 else{
                     p->nextarc = q->nextarc;
@@ -245,33 +248,36 @@ Status DeleteVex(ALGraph *G,VertexType v){
         }
         free(p); p = q;
     }
-    for (k = i + 1; k <= (*G).vexnum; ++k)  //顶点上移
-        (*G).vertices[k - 1] = (*G).vertices[k];
+    for (j = i + 1; j <= (*G).vexnum; ++j)  //顶点上移
+        (*G).vertices[j - 1] = (*G).vertices[j];
     --(*G).vexnum;      //顶点个数减1
     return OK;
 }//DeleteVex
 
-Status InsertArc(ALGraph *G,VertexType v,VertexType w,...){
+Status InsertArc(ALGraph *G,VertexType v,VertexType w,int IncInfo,...){
     //v和w是图G中两个顶点，在G中增添弧<v,w>，若G是无向的，则还增添对称弧<w,v>
+    //IncInfo指示弧中是否包含信息
     int i = LocateVex(*G,v);
     int j = LocateVex(*G,w);
     ArcNode *p,*q,*r;
+    if(!i || !j) return ERROR;
+
     va_list ap;
-    va_start(ap,w);
+    va_start(ap,IncInfo);
     char *info = va_arg(ap,InfoType);     //弧信息
     va_end(ap);
-    if(!i || !j) return ERROR;
 
     p = (*G).vertices[i].firstarc;
     while (p && p->nextarc) p = p->nextarc;
     q = (ArcNode *)malloc(sizeof(ArcNode));
     if(!q) exit(OVERFLOW);
     q->adjvex = j; q->nextarc = NULL;
-    if(info){
+    if(IncInfo){
         q->info = (InfoType *)malloc(sizeof(InfoType));
         if(!q->info) exit(OVERFLOW);
         *(q->info) = info;
     }
+    else q->info = NULL;
     if(p) p->nextarc = q;
     else (*G).vertices[i].firstarc = q;
 
@@ -308,9 +314,8 @@ Status DeleteArc(ALGraph *G,VertexType v,VertexType w){
         p = q = (*G).vertices[j].firstarc;
         while (q && q->adjvex != i) {p = q; q = q->nextarc;}
         if(!q) return ERROR;
-        if(q->info) q->info = NULL;
-        if(p == (*G).vertices[i].firstarc)
-            (*G).vertices[i].firstarc = q->nextarc;
+        if(p == (*G).vertices[j].firstarc)
+            (*G).vertices[j].firstarc = q->nextarc;
         else p->nextarc = q->nextarc;
         free(q);
     }
