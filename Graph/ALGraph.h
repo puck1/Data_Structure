@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include "status.h"
-#include "..\General\string_p.h"        //读取不定长字符串
+#include "..\General\string_p.h"    //读取不定长字符串
 
 // - - - - - 图的邻接表(Adjacency List)存储表示 - - - - -
 typedef char    VertexType;         //存储数据类型定为char
@@ -21,7 +21,7 @@ typedef struct ArcNode{
 typedef struct VNode{
     VertexType   data;              //顶点信息
     ArcNode     *firstarc;          //指向第一条依附该顶点的弧的指针
-}VNode,AdjList[MAX_VERTEX_NUM + 1]; //头结点
+}VNode,AdjList[MAX_VERTEX_NUM + 1]; //头结点,0号单元弃用
 typedef struct {
     AdjList     vertices;
     int         vexnum,arcnum;      //图的当前顶点数和弧数
@@ -49,7 +49,7 @@ Status CreateDG(ALGraph *DG){
     printf("Enter each arc's tail and head separated by delimitador:\n");
     for (k = 1; k <= (*DG).arcnum; ++k){        //建立表结点
         printf("No.%d:",k);
-        scanf("%c%*c%c%*c",&v1,&v2);               //输入一条弧依附的顶点
+        scanf("%c%*c%c%*c",&v1,&v2);            //输入一条弧依附的顶点
         i = LocateVex(*DG,v1); j = LocateVex(*DG,v2);   //确定v1和v2在DG中位置
         if(!i || !j) return ERROR;
         a1 = (*DG).vertices[i].firstarc;
@@ -86,10 +86,10 @@ Status CreateUDG(ALGraph *UDG){
         (*UDG).vertices[k].firstarc = NULL;
     }
     printf("Enter each arc's tail and head separated by delimitador:\n");
-    for (k = 1; k <= (*UDG).arcnum; ++k){        //建立表结点
+    for (k = 1; k <= (*UDG).arcnum; ++k){       //建立表结点
         printf("No.%d:",k);
-        scanf("%c%*c%c%*c",&v1,&v2);               //输入一条边依附的顶点
-        i = LocateVex(*UDG,v1); j = LocateVex(*UDG,v2);   //确定v1和v2在UDG中位置
+        scanf("%c%*c%c%*c",&v1,&v2);            //输入一条边依附的顶点
+        i = LocateVex(*UDG,v1); j = LocateVex(*UDG,v2); //确定v1和v2在UDG中位置
         if(!i || !j) return ERROR;
         a1 = (*UDG).vertices[i].firstarc;
         while (a1 && a1->nextarc) a1 = a1->nextarc;
@@ -104,15 +104,15 @@ Status CreateUDG(ALGraph *UDG){
         }
         else a2->info = NULL;
         if(a1) a1->nextarc = a2;
-        else (*UDG).vertices[i].firstarc = a2;   //是第一条边
+        else (*UDG).vertices[i].firstarc = a2;      //是第一条边
 
         a1 = (*UDG).vertices[j].firstarc;
         while (a1 && a1->nextarc) a1 = a1->nextarc;
-        a3 = (ArcNode *)malloc(sizeof(ArcNode));        //建立边<v2,v1>
+        a3 = (ArcNode *)malloc(sizeof(ArcNode));    //建立边<v2,v1>
         if(!a3) exit(OVERFLOW);
         a3->adjvex = i; a3->nextarc = NULL; a3->info = a2->info;
         if(a1) a1->nextarc = a3;
-        else (*UDG).vertices[j].firstarc = a3;   //是第一条边
+        else (*UDG).vertices[j].firstarc = a3;      //是第一条边
     }//for
     printf("Succeeded!\n");
     return OK;
@@ -227,14 +227,14 @@ Status DeleteVex(ALGraph *G,VertexType v){
                     (*G).vertices[j].firstarc = q->nextarc;
                     free(q); q = (*G).vertices[j].firstarc;
                 }
-                else{
+                else {
                     p->nextarc = q->nextarc;
                     free(q); q = p->nextarc;
                 }
                 --(*G).arcnum; //弧数减1
             }//if
             else {
-                if (q->adjvex > i) --q->adjvex;         //弧的顶点已变动
+                if (q->adjvex > i) --q->adjvex;     //弧的顶点已变动
                 p = q; q = q->nextarc;
             }//else
         }//while
@@ -281,7 +281,7 @@ Status InsertArc(ALGraph *G,VertexType v,VertexType w,int IncInfo,...){
     if(p) p->nextarc = q;
     else (*G).vertices[i].firstarc = q;
 
-    if((*G).kind == UDG){       //无向图
+    if((*G).kind == UDG){   //无向图
         p = (*G).vertices[j].firstarc;
         while (p && p->nextarc) p = p->nextarc;
         r = (ArcNode *)malloc(sizeof(ArcNode));
