@@ -164,12 +164,12 @@ Status DeleteVex(OLGraph *G,VertexType v){
                         free(q); q = p->tlink;
                     }
                     --(*G).arcnum;
-                }
+                }//if
                 else {
                     if (q->headvex > i) --q->headvex;   //弧的顶点已变动
                     if (q->tailvex > i) --q->tailvex;
                     p = q; q = q->tlink;
-                }
+                }//else
             }//while
 
             p = q = (*G).xlist[j].firstin;
@@ -205,7 +205,7 @@ Status InsertArc(OLGraph *G,VertexType v,VertexType w,int IncInfo,...){
 
     va_list ap;
     va_start(ap,IncInfo);
-    char *info = va_arg(ap,char*);  //弧信息
+    InfoType info = va_arg(ap,InfoType);    //弧信息
     va_end(ap);
 
     if(!(p = (ArcBox *)malloc(sizeof(ArcBox)))) exit(OVERFLOW);

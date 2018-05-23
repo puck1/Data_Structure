@@ -77,7 +77,7 @@ Status CreateUDG(ALGraph *UDG){
     int IncInfo;
     ArcNode *a1,*a2,*a3;
     VertexType v1,v2;
-    printf("Enter number of UDG's vertex,arc and determine "
+    printf("Enter number of UDG's vertex,edge and determine "
             "whether to include information(0/1):");
     scanf("%d%*c%d%*c%d%*c",&(*UDG).vexnum,&(*UDG).arcnum,&IncInfo);  //IncInfo为0则各弧不包含其他信息
     printf("Enter the datas of all %d vertex(es) separated by delimitador:",(*UDG).vexnum);
@@ -85,7 +85,7 @@ Status CreateUDG(ALGraph *UDG){
         scanf("%c%*c",&(*UDG).vertices[k].data);
         (*UDG).vertices[k].firstarc = NULL;
     }
-    printf("Enter each arc's tail and head separated by delimitador:\n");
+    printf("Enter two vertexes of each edge separated by delimitador:\n");
     for (k = 1; k <= (*UDG).arcnum; ++k){       //建立表结点
         printf("No.%d:",k);
         scanf("%c%*c%c%*c",&v1,&v2);            //输入一条边依附的顶点
@@ -264,7 +264,7 @@ Status InsertArc(ALGraph *G,VertexType v,VertexType w,int IncInfo,...){
 
     va_list ap;
     va_start(ap,IncInfo);
-    char *info = va_arg(ap,InfoType);     //弧信息
+    InfoType info = va_arg(ap,InfoType);     //弧信息
     va_end(ap);
 
     p = (*G).vertices[i].firstarc;

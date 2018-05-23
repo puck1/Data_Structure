@@ -310,7 +310,7 @@ Status InsertArc(MGraph *G,VertexType v,VertexType w,...){
     va_list ap;
     va_start(ap,w);
     if((*G).kind == DN || (*G).kind == UDN) weight = va_arg(ap,int);    //网
-    IncInfo = va_arg(ap,int); char *info = va_arg(ap,InfoType);         //弧信息
+    IncInfo = va_arg(ap,int); InfoType info = va_arg(ap,InfoType);      //弧信息
     va_end(ap);
 
     (*G).arcs[i][j].adj = weight;
