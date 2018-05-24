@@ -25,9 +25,9 @@ int main(int argc, char const *argv[]){
 
     printf("Delete edge <@,!>...");
     if(DeleteArc(&G,'@','!')) printf("Succeeded!"); printf("\n");
-    printf("Delete vertrex '#' and '!'...");
+    printf("Delete vertex '#' and '!'...");
     if(DeleteVex(&G,'#') && DeleteVex(&G,'!')) printf("Succeeded!"); printf("\n");
-    printf("Delete vertrex '@'...");
+    printf("Delete vertex '@'...");
     if(DeleteVex(&G,'@')) printf("Succeeded!"); printf("\n");
     DestroyGraph(&G);
     G.vexnum == 0 && G.edgenum == 0? printf("Graph is destroyed!\n"):printf("Graph isnot destroyed!\n");
