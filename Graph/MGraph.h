@@ -8,6 +8,9 @@
 #include "status.h"
 #include "..\General\string_p.h"        //读取不定长字符串
 
+typedef int QElemType;
+#include "..\Queue\LinkQueue.h"         //用于图的广度优先遍历
+
 // - - - - - 图的数组（邻接矩阵 Adjacency matrix）存储表示 - - - - -
 typedef char VertexType;                //存储数据类型定为char
 #define INFINITY INT_MAX                //最大值∞
@@ -27,8 +30,13 @@ typedef struct {
     GraphKind   kind;                       //图的种类标志
 }MGraph;
 
+// - - - - - - 图的深度及广度优先遍历算法使用的全局变量 - - - - -
+bool visited[MAX_VERTAX_NUM + 1];           //访问标志数组,0号单元弃用
+Status (*VisitFunc)(VertexType);            //函数变量
+
 // - - - - - 需要调用的函数原型声明 - - - - -
 int LocateVex(MGraph G,VertexType u);
+void DFS(MGraph G,int i);
 
 // - - - - - 基本操作的算法描述 - - - - -
 Status CreateDG(MGraph *DG){
@@ -344,16 +352,49 @@ Status DeleteArc(MGraph *G,VertexType v,VertexType w){
     return OK;
 }//DeleteArc
 
-Status DFSTraverse(MGraph G,Status (*Visit)(VertexType)){
+void DFSTraverse(MGraph G,Status (*Visit)(VertexType)){
     //Visit是顶点的应用函数，对图G进行深度优先遍历，在遍历过程中
     //对每个顶点调用函数Visit一次且仅一次。一旦Visit()失败，则操作失败
-
+    int i;
+    VisitFunc = Visit;      //使用全局变量VisitFunc，使DFS不必设函数参数指针
+    for (i = 1; i <= G.vexnum; ++i) visited[i] = FALSE; //访问标志数组初始化
+    for (i = 1; i <= G.vexnum; ++i)
+        if(!visited[i]) DFS(G,i);       //对尚未访问的顶点调用DFS
 }//DFSTraverse
 
-Status BFSTraverse(MGraph G,Status (*Visit)(VertexType)){
-    //Visit是顶点的应用函数，对图G进行广度优先遍历，在遍历过程中
-    //对每个顶点调用函数Visit一次且仅一次。一旦Visit()失败，则操作失败
+void DFS(MGraph G,int i){
+    //从第i个顶点出发递归地深度优先遍历图G
+    int j;
+    VertexType v;
+    visited[i] = TRUE; VisitFunc(G.vexs[i]);    //访问第i个顶点
+    for (v = FirstAdjVex(G,G.vexs[i]); v != ' '; v = NextAdjVex(G,G.vexs[i],v)){
+        j = LocateVex(G,v);
+        if(!visited[j]) DFS(G,j);       //对G.vexs[i]的尚未访问的邻接顶点v递归调用DFS
+    }
+}//DFS
 
+void BFSTraverse(MGraph G,Status (*Visit)(VertexType)){
+    //按广度优先非递归遍历图G。使用辅助队列Q和访问标志数组visited。
+    int i ,j;
+    VertexType v; QElemType q;
+    LinkQueue Q; InitQueue(&Q);
+    for (i = 1; i <= G.vexnum; ++i) visited[i] = FALSE;
+    for (i = 1; i <= G.vexnum; ++i)
+        if(!visited[i]){
+            visited[i] = TRUE; Visit(G.vexs[i]);
+            EnQueue(&Q,i);
+            while(!QueueEmpty(Q)){
+                DeQueue(&Q,&q);
+                for (v = FirstAdjVex(G,G.vexs[q]); v != ' '; v = NextAdjVex(G,G.vexs[q],v)){
+                    j = LocateVex(G,v);
+                    if(!visited[j]){
+                        visited[j] = TRUE; Visit(G.vexs[j]);
+                        EnQueue(&Q,j);
+                    }//if
+                }//for
+            }//while
+        }//if
+    DestroyQueue(&Q);
 }//DFSTraverse
 
 #endif // !MGRAPH_H
