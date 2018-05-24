@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include "status.h"
 #include "TriLinkBinaryTree.h"
 
 Status PrintElement(TElemType e){

@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <synchapi.h>   //gcc中提供Sleep函数（以毫秒为单位）原型
+#include "status.h"
 #include "ThreadedBinaryTree.h"
 
 Status PrintElement(TElemType e){

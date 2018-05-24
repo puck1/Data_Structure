@@ -1,6 +1,6 @@
 
 #include <stdio.h>
-#include <synchapi.h>
+#include <synchapi.h>   //gcc中提供Sleep函数（以毫秒为单位）原型
 #include "HuffmanCode.h"
 
 int main(){

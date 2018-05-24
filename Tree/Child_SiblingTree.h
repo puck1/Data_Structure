@@ -40,7 +40,7 @@ Status CreateTree(CSTree *T){
         (*T)->data = e;                     //建立根结点
         CreateTree(&(*T)->firstchild);      //建立第一棵子树
         CreateTree(&(*T)->nextsibling);     //建立其它子树
-        }
+    }
     return OK;
 }//CreateTree
 
