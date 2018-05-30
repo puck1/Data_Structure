@@ -35,9 +35,9 @@ typedef int MazeType;	//迷宫元素类型
 void InitMaze(MazeType maze[N][N],PosType *ent,PosType *exit){
 	int i,j,dice;
 	srand((unsigned)time(NULL));		//用系统时间做随机数种子
-	for(i=0;i<N;++i){
-		for(j=0;j<N;++j){
-			if(i == 0||i == N-1||j == 0||j == N-1){
+	for(i = 0; i < N; ++i){
+		for(j = 0; j < N; ++j){
+			if(i == 0 || i == N-1 || j == 0 || j == N-1){
 				maze[i][j] = Wall;		//建立迷宫外墙
 			}
 			else{
@@ -57,8 +57,8 @@ void InitMaze(MazeType maze[N][N],PosType *ent,PosType *exit){
 
 void PrintMaze(MazeType maze[N][N]){
 	int i,j;
-	for(i=0;i<N;++i){
-		for(j=0;j<N;++j){
+	for(i = 0;i < N; ++i){
+		for(j = 0; j < N; ++j){
 			if(maze[i][j] == Wall)
 				printf("■");		//墙壁
 			else if(maze[i][j] == Obstacle)
@@ -99,10 +99,10 @@ PosType NextPos(PosType pos,int dir){
 	//输出当前位置的某一方向上的下一位置坐标
 	PosType next = pos;
 	switch(dir){
-		case Down: ++next.x; break;
+		case Down: 	++next.x; break;
 		case Right: ++next.y; break;
-		case Up: --next.x; break;
-		case Left: --next.y; break;
+		case Up: 	--next.x; break;
+		case Left: 	--next.y; break;
 	}
 	return next;
 }//NextPos
@@ -114,7 +114,7 @@ void MarkPrint(MazeType maze[N][N],PosType pos){
 
 Status EqualPos(PosType pos1,PosType pos2){
 	//比较两个位置结构体坐标是否相等，若相等，返回TRUE，否则返回FALSE
-	if(pos1.x==pos2.x && pos1.y==pos2.y) return TRUE;
+	if(pos1.x == pos2.x && pos1.y == pos2.y) return TRUE;
 	return FALSE;
 }//EqualPos
 

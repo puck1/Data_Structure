@@ -8,11 +8,14 @@
 #include "status.h"
 #include "..\General\string_p.h"    //读取不定长字符串
 
+typedef int QElemType;
+#include "..\Queue\LinkQueue.h"     //用于图的广度优先遍历
+
 // - - - - - 无向图的邻接多重表(Adjacency Multilist)存储表示 - - - - -
 typedef char    VertexType;         //存储数据类型定为char
 typedef char*   InfoType;
 #define MAX_VERTEX_NUM  20
-typedef enum {unvisited, visited} VisitIf;
+typedef enum {unvisit, visit} VisitIf;
 typedef struct EBox {
     VisitIf     mark;               //访问标记
     int         ivex, jvex;         //该边依附的两个顶点的位置
@@ -28,10 +31,15 @@ typedef struct {
     int     vexnum, edgenum;        //无向图的当前顶点数和边数
 }AMLGraph;
 
+// - - - - - 图的深度及广度优先遍历算法使用的全局变量 - - - - -
+bool visited[MAX_VERTEX_NUM + 1];   //访问标志数组，0号单元弃用
+Status (*VisitFunc)(VertexType);    //函数变量
+
 // - - - - - 需要调用的函数原型声明 - - - - -
 int LocateVex(AMLGraph G,VertexType u);
 Status DeleteArc(AMLGraph *G,VertexType v,VertexType w);
-void MarkAsUnvisited(AMLGraph *G);
+void MarkAsUnvisit(AMLGraph *G);
+void DFS(AMLGraph G,int i);
 
 // - - - - - 基本操作的算法描述 - - - - -
 Status CreateUDG(AMLGraph *UDG){
@@ -55,7 +63,7 @@ Status CreateUDG(AMLGraph *UDG){
         i = LocateVex(*UDG,v1); j = LocateVex(*UDG,v2); //确定v1和v2在UDG中位置
         if(!i || !j) return ERROR;
         if(!(p = (EBox *)malloc(sizeof(EBox)))) exit(OVERFLOW);
-        p->mark = unvisited; p->ivex = i; p->jvex = j;
+        p->mark = unvisit; p->ivex = i; p->jvex = j;
         p->ilink = (*UDG).adjmulist[i].firstedge;
         p->jlink = (*UDG).adjmulist[j].firstedge;
         (*UDG).adjmulist[i].firstedge = (*UDG).adjmulist[j].firstedge = p;
@@ -128,6 +136,21 @@ VertexType FirstAdjVex(AMLGraph G,VertexType v){
     return ' ';
 }//FirstAdjVex
 
+int FirstAdjVex_i(AMLGraph G,int k){
+    //k是图G中某个顶点的位置，返回其第一个邻接顶点的位置，若顶点在G中没有邻接顶点，则返回0
+    EBox *p;
+    if(k != 0){
+        p = G.adjmulist[k].firstedge;
+        if(p){
+            if(k == p->ivex)
+                return p->jvex;
+            else if (k == p->jvex)
+                return p->ivex;
+        }
+    }
+    return 0;
+}//FirstAdjVex_i
+
 VertexType NextAdjVex(AMLGraph G,VertexType v,VertexType w){
     //v是图G中某个顶点，w是v的邻接顶点，返回v的（相对于w的）下一个邻接顶点；
     //若顶点在G中没有邻接顶点，则返回“空”
@@ -138,7 +161,7 @@ VertexType NextAdjVex(AMLGraph G,VertexType v,VertexType w){
         p = G.adjmulist[k1].firstedge;
         while (p){      //寻找边<v，w>的邻接边★
             if(p->ivex == k1){
-                if(p->jvex == k2) {p = p->ilink; break;}
+                if (p->jvex == k2) {p = p->ilink; break;}
                 else p = p->ilink;
             }
             else if(p->jvex == k1){
@@ -151,6 +174,28 @@ VertexType NextAdjVex(AMLGraph G,VertexType v,VertexType w){
     }//if
     return ' ';
 }//NextAdjVex
+
+int NextAdjVex_i(AMLGraph G,int k1,int k2){
+    //k1是图G中某个顶点位置，k2指示k1的邻接顶点位置，返回k1的（相对于k2的）下一个邻接顶点位置；
+    //若顶点在G中没有邻接顶点，则返回0
+    EBox *p;
+    if(k1 && k2){
+        p = G.adjmulist[k1].firstedge;
+        while (p){
+            if(p->ivex == k1){
+                if (p->jvex == k2) {p = p->ilink; break;}
+                else p = p->ilink;
+            }
+            else if(p->jvex == k1){
+                if (p->ivex == k2) {p = p->jlink; break;}
+                else p = p->jlink;
+            }
+        }//while
+        if(p && p->ivex == k1) return p->jvex;
+        if(p && p->jvex == k1) return p->ivex;
+    }//if
+    return 0;
+}//NextAdjVex_i
 
 Status InsertVex(AMLGraph *G,VertexType v){
     //v和图G中顶点有相同特征，在图G中增添新顶点v
@@ -169,7 +214,7 @@ Status DeleteVex(AMLGraph *G,VertexType v){
     EBox *p, *q;
     if(k2 == 0) return ERROR;
 
-    MarkAsUnvisited(G);
+    MarkAsUnvisit(G);
     for (k1 = 1; k1 <= (*G).vexnum; ++k1){
         if(k1 != k2){
             p = q = (*G).adjmulist[k1].firstedge;
@@ -221,10 +266,10 @@ Status DeleteVex(AMLGraph *G,VertexType v){
         if(k1 != k2){
             p = (*G).adjmulist[k1].firstedge;
             while (p){
-                if(p->mark == unvisited){
+                if(p->mark == unvisit){
                     if(p->ivex > k2) --p->ivex;
                     if(p->jvex > k2) --p->jvex;
-                    p->mark = visited;
+                    p->mark = visit;
                 }
                 p = p->ilink;
             }//while
@@ -234,7 +279,7 @@ Status DeleteVex(AMLGraph *G,VertexType v){
     for(k1 = k2 + 1; k1 <= (*G).vexnum; ++k1)
         (*G).adjmulist[k1 - 1] = (*G).adjmulist[k1];    //顶点上移
     --(*G).vexnum;      //顶点个数减1
-    MarkAsUnvisited(G);
+    MarkAsUnvisit(G);
     return OK;
 }//DeleteVex
 
@@ -252,7 +297,7 @@ Status InsertArc(AMLGraph *G,VertexType v,VertexType w,int IncInfo,...){
     va_end(ap);
 
     if(!(p = (EBox *)malloc(sizeof(EBox)))) exit(OVERFLOW);
-    p->mark = unvisited; p->ivex = i; p->jvex = j;
+    p->mark = unvisit; p->ivex = i; p->jvex = j;
     p->ilink = (*G).adjmulist[i].firstedge;
     p->jlink = (*G).adjmulist[j].firstedge;
     if(IncInfo){
@@ -329,29 +374,58 @@ Status DeleteArc(AMLGraph *G,VertexType v,VertexType w){
     return OK;
 }//DeleteArc
 
-void MarkAsUnvisited(AMLGraph *G){
-    //将邻接多重表表示的图G中边的访问标记全部置为unvisited
+void MarkAsUnvisit(AMLGraph *G){
+    //将邻接多重表表示的图G中边的访问标记全部置为unvisit
     int i;
     EBox *p;
     for (i = 1; i <= (*G).vexnum; ++i){
         p = (*G).adjmulist[i].firstedge;
         while (p){
-            if(p->mark == visited) p->mark = unvisited;
+            if(p->mark == visit) p->mark = unvisit;
             p = p->ilink;
         }//while
     }//for
-}//MarkAsUnvisited
+}//MarkAsUnvisit
 
-Status DFSTraverse(AMLGraph G,Status (*Visit)(VertexType)){
+void DFSTraverse(AMLGraph G,Status (*Visit)(VertexType)){
     //Visit是顶点的应用函数，对图G进行深度优先遍历，在遍历过程中
     //对每个顶点调用函数Visit一次且仅一次。一旦Visit()失败，则操作失败
-
+    int i;
+    VisitFunc = Visit;      //使用全局变量VisitFunc，使DFS不必设函数参数指针
+    for (i = 1; i <= G.vexnum; ++i) visited[i] = FALSE; //访问标志数组初始化
+    for (i = 1; i <= G.vexnum; ++i)
+        if(!visited[i]) DFS(G,i);       //对尚未访问的结点调用DFS
 }//DFSTraverse
 
-Status BFSTraverse(AMLGraph G,Status (*Visit)(VertexType)){
+void DFS(AMLGraph G,int i){
+    //从第i个顶点出发递归地深度优先遍历图G
+    int j;
+    visited[i] = TRUE; VisitFunc(G.adjmulist[i].data);      //访问第i个顶点
+    for (j = FirstAdjVex_i(G,i); j != 0; j = NextAdjVex_i(G,i,j))
+        if(!visited[j]) DFS(G,j);                           //对i的尚未访问的邻接点递归调用DFS
+}//DFS
+
+void BFSTraverse(AMLGraph G,Status (*Visit)(VertexType)){
     //Visit是顶点的应用函数，对图G进行广度优先遍历，在遍历过程中
     //对每个顶点调用函数Visit一次且仅一次。一旦Visit()失败，则操作失败
-
+    int i, j;
+    QElemType k;
+    LinkQueue Q; InitQueue(&Q);         //置空的辅助队列Q
+    for (i = 1; i <= G.vexnum; ++i) visited[i] = FALSE;
+    for (i = 1; i <= G.vexnum; ++i)
+        if(!visited[i]){                //i尚未访问
+            visited[i] = TRUE; Visit(G.adjmulist[i].data);
+            EnQueue(&Q,i);              //i入队列
+            while (!QueueEmpty(Q)){
+                DeQueue(&Q,&k);         //队头元素出列并置为k
+                for (j = FirstAdjVex_i(G,k); j != 0; j = NextAdjVex_i(G,k,j))
+                    if(!visited[j]){    //j为k的未访问的邻接顶点
+                        visited[j] = TRUE; Visit(G.adjmulist[j].data);
+                        EnQueue(&Q,j);
+                    }//if
+            }//while
+        }//if
+    DestroyQueue(&Q);
 }//DFSTraverse
 
 #endif // !AMLGRAPH_H

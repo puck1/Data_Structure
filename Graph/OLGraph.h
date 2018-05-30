@@ -8,6 +8,9 @@
 #include "status.h"
 #include "../General/string_p.h"        //读取不定长字符串
 
+typedef int QElemType;
+#include "..\Queue\LinkQueue.h"         //用于图的广度优先遍历
+
 // - - - - - 有向图的十字链表(Orthogonal List)存储表示 - - - - -
 typedef char    VertexType;             //存储数据类型定为char
 typedef char*   InfoType;
@@ -23,11 +26,16 @@ typedef struct {
 }VexNode;
 typedef struct {
     VexNode xlist[MAX_VERTEX_NUM + 1];  //表头向量,0号单元弃用
-    int     vexnum,arcnum;              //有向图的当前顶点数和弧数
+    int     vexnum, arcnum;             //有向图的当前顶点数和弧数
 }OLGraph;
+
+// - - - - - 图的深度及广度优先遍历算法使用的全局变量 - - - - -
+bool visited[MAX_VERTEX_NUM + 1];       //访问标志数组，0号单元弃用
+Status (*VisitFunc)(VertexType);        //函数变量
 
 // - - - - - 需要调用的函数原型声明 - - - - -
 int LocateVex(OLGraph G,VertexType u);
+void DFS(OLGraph G,int i);
 
 // - - - - - 基本操作的算法描述 - - - - -
 Status CreateDG(OLGraph *DG){
@@ -117,6 +125,16 @@ VertexType FirstAdjVex(OLGraph G,VertexType v){
     return ' ';
 }//FirstAdjVex
 
+int FirstAdjVex_i(OLGraph G,int i){
+    //i是图G中某个顶点的位置，返回其第一个邻接顶点(以出弧连接)的位置，若顶点在G中没有邻接顶点，则返回0
+    ArcBox *p;
+    if(i != 0){
+        p = G.xlist[i].firstout;
+        if(p) return p->headvex;
+    }
+    return 0;
+}//FirstAdjVex_i
+
 VertexType NextAdjVex(OLGraph G,VertexType v,VertexType w){
     //v是图G中某个顶点，w是v的邻接顶点(以出弧连接)，返回v的（相对于w的）下一个邻接顶点；
     //若顶点在G中没有邻接顶点，则返回“空”
@@ -132,6 +150,18 @@ VertexType NextAdjVex(OLGraph G,VertexType v,VertexType w){
     }//if
     return ' ';
 }//NextAdjVex
+
+int NextAdjVex_i(OLGraph G,int i,int j){
+    //i是图G中某个顶点位置，j指示i的邻接顶点(以出弧连接)位置，返回i的（相对于j的）下一个邻接顶点位置；
+    //若顶点在G中没有邻接顶点，则返回0
+    ArcBox *p;
+    if(i && j){
+        p = G.xlist[i].firstout;
+        while (p && p->headvex != j) p = p->tlink;
+        if(p && p->tlink) return p->tlink->headvex;
+    }
+    return 0;
+}//NextAdjVex_i
 
 Status InsertVex(OLGraph *G,VertexType v){
     //v和图G中顶点有相同特征，在图G中增添新顶点v
@@ -255,16 +285,45 @@ Status DeleteArc(OLGraph *G,VertexType v,VertexType w){
     return OK;
 }//DeleteArc
 
-Status DFSTraverse(OLGraph G,Status (*Visit)(VertexType)){
+void DFSTraverse(OLGraph G,Status (*Visit)(VertexType)){
     //Visit是顶点的应用函数，对图G进行深度优先遍历，在遍历过程中
     //对每个顶点调用函数Visit一次且仅一次。一旦Visit()失败，则操作失败
-
+    int i;
+    VisitFunc = Visit;      //使用全局变量VisitFunc，使DFS不必设函数参数指针
+    for (i = 1; i <= G.vexnum; ++i) visited[i] = FALSE; //访问标志数组初始化
+    for (i = 1; i <= G.vexnum; ++i)
+        if(!visited[i]) DFS(G,i);       //对尚未访问的结点调用DFS
 }//DFSTraverse
 
-Status BFSTraverse(OLGraph G,Status (*Visit)(VertexType)){
+void DFS(OLGraph G,int i){
+    //从第i个顶点出发递归地深度优先遍历图G
+    int j;
+    visited[i] = TRUE; VisitFunc(G.xlist[i].data);      //访问第i个顶点
+    for (j = FirstAdjVex_i(G,i); j != 0; j = NextAdjVex_i(G,i,j))
+        if(!visited[j]) DFS(G,j);                       //对i的尚未访问的邻接点递归调用DFS
+}//DFS
+
+void BFSTraverse(OLGraph G,Status (*Visit)(VertexType)){
     //Visit是顶点的应用函数，对图G进行广度优先遍历，在遍历过程中
     //对每个顶点调用函数Visit一次且仅一次。一旦Visit()失败，则操作失败
-
+    int i, j;
+    QElemType k;
+    LinkQueue Q; InitQueue(&Q);         //置空的辅助队列Q
+    for (i = 1; i <= G.vexnum; ++i) visited[i] = FALSE;
+    for (i = 1; i <= G.vexnum; ++i)
+        if(!visited[i]){                //i尚未访问
+            visited[i] = TRUE; Visit(G.xlist[i].data);
+            EnQueue(&Q,i);              //i入队列
+            while (!QueueEmpty(Q)){
+                DeQueue(&Q,&k);         //队头元素出列并置为k
+                for (j = FirstAdjVex_i(G,k); j != 0; j = NextAdjVex_i(G,k,j))
+                    if(!visited[j]){    //j为k的未访问的邻接顶点
+                        visited[j] = TRUE; Visit(G.xlist[j].data);
+                        EnQueue(&Q,j);
+                    }//if
+            }//while
+        }//if
+    DestroyQueue(&Q);
 }//DFSTraverse
 
 #endif // !OLGRAPH_H

@@ -3,7 +3,7 @@
  * This file includes creating,traverse,merge and some other basic operateions.
  */
 
-typedef int ElemType;	//测试所用线性表数据类型暂定为int 
+typedef int ElemType;	//测试所用线性表数据类型暂定为int
 
 #include <stdio.h>
 #include "status.h"
@@ -11,7 +11,8 @@ typedef int ElemType;	//测试所用线性表数据类型暂定为int
 
 Status visit(Link p){
 	printf("%d ",p->data);
-}//visit 
+	return OK;
+}//visit
 
 int cmp(ElemType a,ElemType b){
 	return a-b;
@@ -25,7 +26,6 @@ int main(){
 	CreateList(&Lb);
 	MergeList_L(&La,&Lb,&Lc,&cmp);
 	printf("\n归并La与Lb所得Lc");
-	ListTraverse(Lc,&visit);	 
+	ListTraverse(Lc,&visit);
 	return 0;
 }//扩展的线性表的建立/遍历/归并
- 

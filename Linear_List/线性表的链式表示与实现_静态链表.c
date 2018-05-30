@@ -4,7 +4,7 @@
 #include "status.h" 
 
 //- - - - - 线性表的静态单链表存储结构 - - - - -
-#define ElemType 	int	//线性表存放的数据类型
+#define ElemType 	int		//线性表存放的数据类型
 #define MAXSIZE 1000		//链表的最大长度
 typedef struct{
 	ElemType data;
@@ -18,7 +18,7 @@ int LocateELem_SL(SLinkList space,int S,ElemType e){
 	//S为其头结点。 
 	int i = space[S].cur; int count = 1;	//i指示表中第一个结点 
 	while(i&&space[i].data!=e){
-		i = space[i].cur; ++count; 	//在表中顺链查找★ 
+		i = space[i].cur; ++count; 			//在表中顺链查找★ 
 	}
 	if(!i) return i;
 	else return count;	 	 
@@ -49,10 +49,10 @@ Status ListInsert_SL(SLinkList space,int S,int k,ElemType e){
 	//S为其头指针。假设备用空间足够大，space[0].cur为其头指针。 
 	int i = S; int count = 0;
 	while(i&&count<k-1) {
-		i = space[i].cur; ++count;	//寻找处于第k-1位置的结点 
+		i = space[i].cur; ++count;					//寻找处于第k-1位置的结点 
 	}
-	if(count!=k-1) return ERROR;		//插入位置不合理 
-	int j = Malloc_SL(space);		//生成新结点 
+	if(count!=k-1) return ERROR;					//插入位置不合理 
+	int j = Malloc_SL(space);						//生成新结点 
 	space[j].data = e; space[j].cur = space[i].cur; //插入S中 
 	space[i].cur = j;
 	return OK; 
@@ -64,7 +64,7 @@ Status ListDelete_SL(SLinkList space,int S,int k,ElemType *e){
 	while(space[i].cur&&count<k-1){		//寻找位于第k个位置的元素，并令i指向其前趋 
 		i = space[i].cur; ++count;
 	}
-	if(!space[i].cur||count>k-1) return ERROR;		//删除位置不合理 
+	if(!space[i].cur||count>k-1) return ERROR;			//删除位置不合理 
 	int j = space[i].cur; space[i].cur = space[j].cur;	//删除并释放结点 
 	*e = space[j].data; Free_SL(space,j);
 	return OK;
@@ -88,41 +88,41 @@ void difference(SLinkList space,int *S){
 	//的静态链表，S为其头指针。假设备用空间足够大，space[0].cur为其头指针。
 	InitSpace_SL(space);			//初始化备用空间 
 	*S = Malloc_SL(space);			//生成S的头结点 
-	int r = *S;				//r指向S的当前最后结点★
+	int r = *S;						//r指向S的当前最后结点★
 	int num_a,num_b;int data_b;
 	int i; int a,b;	
 	printf("请分别输入A与B的元素个数，" 
 			"A："); scanf("%d",&num_a); 
 	printf	("B:"); scanf("%d",&num_b);		//输入A和B的元素个数 
 	printf("- - - - - - - - - - - - - - - - - - - - - - - - - \n");	
-	for(i=0;i<num_a;++i){				//建立集合A的链表 
-		a = Malloc_SL(space);			//分配结点 
+	for(i=0;i<num_a;++i){					//建立集合A的链表 
+		a = Malloc_SL(space);				//分配结点 
 		printf("请输入A的第%d个值：",i+1);
-		scanf("%d",&space[a].data);		//输入A的元素值 
-		space[r].cur = a; r = a;		//输入到表尾★ 
+		scanf("%d",&space[a].data);			//输入A的元素值 
+		space[r].cur = a; r = a;			//输入到表尾★ 
 	}//for 
-	space[r].cur = 0;				//尾结点的指针为空★
+	space[r].cur = 0;						//尾结点的指针为空★
 	printf("- - - - - - - - - - - - - - - - - - - - - - - - - \n");	
-	for(i=0;i<num_b;++i){				//依次输入B的元素，
-							//若不在当前表中，则插入，否则删除 									
+	for(i=0;i<num_b;++i){					//依次输入B的元素，
+											//若不在当前表中，则插入，否则删除 									
 		printf("请输入B的第%d个值:",i+1);
 		scanf("%d",&data_b);
 		int p = *S;int k = space[*S].cur;	//k指向集合A中第一个结点★(p指向其前趋) 
 		while(k!=space[r].cur&&space[k].data!=data_b){//在当前表中查找
-								//(也写成k&&space[k].data!=data_b) 
-			p = k; k = space[k].cur;	//★ 
+											//(也写成k&&space[k].data!=data_b) 
+			p = k; k = space[k].cur;		//★ 
 		}//while
-		if(k == space[r].cur){			//当前表中不存在该元素，
-							//插入在r所指结点之后，且r的位置不变
+		if(k == space[r].cur){				//当前表中不存在该元素，
+											//插入在r所指结点之后，且r的位置不变
 			int j = Malloc_SL(space);
 			space[j].data = data_b;
 			space[j].cur = space[r].cur;
 			space[r].cur = j;
 		}//if
-		else{					//该元素已在表中，删除之(也写成if(k))
+		else{								//该元素已在表中，删除之(也写成if(k))
 			space[p].cur = space[k].cur;
 			Free_SL(space,k);
-			if(r == k) r = p;		//若删除的是r所指结点，则需修改尾指针★ 
+			if(r == k) r = p;				//若删除的是r所指结点，则需修改尾指针★ 
 		}//else 
 	}//for
 }//difference

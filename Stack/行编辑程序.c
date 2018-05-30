@@ -12,10 +12,10 @@ Status StackToFile(SqStack S){
 	if(fp == NULL){
 		printf("File cannot open!");
 		exit(ERROR);
-	} 
-//	fseek(fp,0L,SEEK_END);	//fp定位到文件末尾续写 
+	}
+	// fseek(fp,0L,SEEK_END);	//fp定位到文件末尾续写
 	SElemType *p = S.base;
-	while(p != S.top){		//从栈底到栈顶输出字符 
+	while(p != S.top){		//从栈底到栈顶输出字符
 		fprintf(fp,"%c",*p);
 		++p;
 	}
@@ -43,23 +43,23 @@ void LinkEdit(Status (*transfer)(SqStack)){
 	//利用字符栈S，从终端接受一行并传送至调用过程的数据区。
 	SqStack S;
 	InitStack(&S);
-	char ch = getchar();	//从终端接收第一个字符 
-	while(ch != EOF){		//EOF为全文结束符 
+	char ch = getchar();	//从终端接收第一个字符
+	while(ch != EOF){		//EOF为全文结束符
 		while(ch != EOF && ch != '\n'){
 			switch(ch){
 				case '#': Pop(&S,&ch); 		break;	//退栈
-				case '@': ClearStack(&S); 	break;	//重置S为空栈 
-				default: Push(&S,ch); 		break;	//有效字符进栈 
+				case '@': ClearStack(&S); 	break;	//重置S为空栈
+				default: Push(&S,ch); 		break;	//有效字符进栈
 			}//switch
-			ch = getchar();	//从终端接收下一个字符 
+			ch = getchar();	//从终端接收下一个字符
 		}
-		if(ch == '\n') Push(&S,ch);	//换行符入栈 
-		(*transfer)(S);		//将从栈底到栈顶的栈内字符传送至缓冲区 
-		ClearStack(&S);		//重置S为空栈 
+		if(ch == '\n') Push(&S,ch);	//换行符入栈
+		(*transfer)(S);		//将从栈底到栈顶的栈内字符传送至缓冲区
+		ClearStack(&S);		//重置S为空栈
 		if(ch != EOF) ch = getchar();
 	}
 	DestroyStack(&S);
-}//LinkEdit 
+}//LinkEdit
 
 int main(){
 	LinkEdit(&StackToFile);
@@ -68,17 +68,17 @@ int main(){
 	int OPT; scanf("%d",&OPT);
 	if(OPT) FileTraverse();
 	return 0;
-}//行编辑程序 
+}//行编辑程序
 
 /**
  * 	FileTraverse的另一种方法：取得文件长度并分配定长字符串，整体输出文件内容。
  * 	此方法问题在于：将字符\n输入文件时，会在文件中输入\n（回车）\r（换行）两个字符；
- *	利用fseek/ftell获取文件长度时，这两个字符都会被计算； 
+ *	利用fseek/ftell获取文件长度时，这两个字符都会被计算；
  *	而fread等从文件输入的函数在遇到这两个字符时候，只会读入\n一个字符，而且计数为1。
  *	因此malloc就会多分配空间，从而引发错误。
- 
+
 	fseek(fp,0L,SEEK_END);	//定位到文件末尾
-	int flen = ftell(fp);	//ftell指示指针与文件开头的偏移字节数 
+	int flen = ftell(fp);	//ftell指示指针与文件开头的偏移字节数
 	char *p = (char*)malloc(flen + 1);
 	if(p == NULL){
 		fclose(fp);

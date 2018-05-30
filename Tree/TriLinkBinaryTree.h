@@ -7,7 +7,7 @@
 #include "status.h"
 
 // - - - - - 二叉树的三叉链表存储表示 - - - - -
-typedef char TElemType;					//存储数据类型定为char
+typedef char TElemType;						//存储数据类型定为char
 typedef struct TBiNode{
 	TElemType data;
 	struct TBiNode *parent,*lchild,*rchild;	//父节点及左右孩子指针

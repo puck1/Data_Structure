@@ -22,9 +22,9 @@ void CreateList_DuL(DuLinkList *L,int n){
 	(*L)->next = *L;
 	(*L)->prior = *L; 
 	for(i=n;i>0;--i){
-		p = (DuLinkList)malloc(sizeof(DuLNode));//生成新结点 
+		p = (DuLinkList)malloc(sizeof(DuLNode));	//生成新结点 
 		printf("请输入第%d个元素的值:",i);
-	 	scanf("%d",&p->data);			//输入元素值 
+	 	scanf("%d",&p->data);					//输入元素值 
 	 	p->next = (*L)->next; (*L)->next = p; 	//插入到表头 
 	 	p->next->prior = p; p->prior = *L;
 	 }
@@ -48,10 +48,10 @@ Status ListInsert_DuL(DuLinkList *L,int i,ElemType e){
 	//在带头结点的双链循环线性表L中第i个位置之前插入元素e，
 	//i的合法值为1<=i<=表长+1。 
 	DuLinkList k = (*L)->next; int count = 1;
-	while(k!=(*L)&&count<i){	//在L中确定插入位置 
+	while(k!=(*L)&&count<i){				//在L中确定插入位置 
 		k = k->next; ++count;
 	}
-	if(count!=i) return ERROR;	//插入位置不合法 
+	if(count!=i) return ERROR;				//插入位置不合法 
 	DuLinkList s;
 	if(!(s = (DuLinkList)malloc(sizeof(DuLNode)))) return ERROR;
 	s->data = e;
@@ -64,10 +64,10 @@ Status ListDelete_DuL(DuLinkList *L,int i,ElemType *e){
 	//删除带头结点的双链循环线性表L的第i个元素，i的合法值为1<=i<=表长
 	//用e返回其值
 	DuLinkList k = (*L)->next; int count = 1;
-	while(k!=(*L)&&count<i){		//在L中确定第i个元素的位置指针k 
+	while(k!=(*L)&&count<i){			//在L中确定第i个元素的位置指针k 
 		k = k->next; ++count;
 	}
-	if(k==*L||count>i) return ERROR;	//第i个元素不存在 
+	if(k==*L||count>i) return ERROR;		//第i个元素不存在 
 	*e = k->data;
 	k->prior->next = k->next;
 	k->next->prior = k->prior;

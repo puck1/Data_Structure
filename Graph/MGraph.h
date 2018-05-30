@@ -233,12 +233,25 @@ VertexType FirstAdjVex(MGraph G,VertexType v){
     if(G.kind == DG || G.kind == UDG) n = 0;
     else n = INFINITY;
     if(i != 0){
-       for (j = 1; j <= G.arcnum; ++j)
+       for (j = 1; j <= G.vexnum; ++j)
             if(G.arcs[i][j].adj != n)
                 return G.vexs[j];
     }
     return ' ';     //空格表示“空”
 }//FirstAdjVex
+
+int FirstAdjVex_i(MGraph G,int i){
+    //i是图G中某个顶点的位置，返回其第一个邻接顶点的位置，若顶点在G中没有邻接顶点，则返回0
+    int j; int n;
+    if(G.kind == DG || G.kind == UDG) n = 0;
+    else n = INFINITY;
+    if(i != 0){
+       for (j = 1; j <= G.vexnum; ++j)
+            if(G.arcs[i][j].adj != n)
+                return j;
+    }
+    return 0;
+}//FirstAdjVex_i
 
 VertexType NextAdjVex(MGraph G,VertexType v,VertexType w){
     //v是图G中某个顶点，w是v的邻接顶点，返回v的（相对于w的）下一个邻接顶点；
@@ -255,6 +268,20 @@ VertexType NextAdjVex(MGraph G,VertexType v,VertexType w){
     }
     return ' ';
 }//NextAdjVex
+
+int NextAdjVex_i(MGraph G,int i,int j){
+    //i是图G中某个顶点位置，j指示i的邻接顶点位置，返回i的（相对于j的）下一个邻接顶点位置；
+    //若顶点在G中没有邻接顶点，则返回0
+    int n;
+    if(G.kind == DG || G.kind == UDG) n = 0;
+    else n = INFINITY;
+    if(i && j && G.arcs[i][j].adj != n){
+        for (j = j + 1; j <= G.vexnum; ++j)
+            if(G.arcs[i][j].adj != n)
+                return j;
+    }
+    return 0;
+}//NextAdjVex_i
 
 Status InsertVex(MGraph *G,VertexType v){
     //v和图G中顶点有相同特征，在图G中增添新顶点v
@@ -365,33 +392,28 @@ void DFSTraverse(MGraph G,Status (*Visit)(VertexType)){
 void DFS(MGraph G,int i){
     //从第i个顶点出发递归地深度优先遍历图G
     int j;
-    VertexType v;
     visited[i] = TRUE; VisitFunc(G.vexs[i]);    //访问第i个顶点
-    for (v = FirstAdjVex(G,G.vexs[i]); v != ' '; v = NextAdjVex(G,G.vexs[i],v)){
-        j = LocateVex(G,v);
-        if(!visited[j]) DFS(G,j);       //对G.vexs[i]的尚未访问的邻接顶点v递归调用DFS
-    }
+    for (j = FirstAdjVex_i(G,i); j != 0; j = NextAdjVex_i(G,i,j))
+        if(!visited[j]) DFS(G,j);               //对i的尚未访问的邻接顶点v递归调用DFS
 }//DFS
 
 void BFSTraverse(MGraph G,Status (*Visit)(VertexType)){
     //按广度优先非递归遍历图G。使用辅助队列Q和访问标志数组visited。
-    int i ,j;
-    VertexType v; QElemType q;
-    LinkQueue Q; InitQueue(&Q);
+    int i, j;
+    QElemType k;
+    LinkQueue Q; InitQueue(&Q);         //置空的辅助队列Q
     for (i = 1; i <= G.vexnum; ++i) visited[i] = FALSE;
     for (i = 1; i <= G.vexnum; ++i)
-        if(!visited[i]){
+        if(!visited[i]){                //i尚未访问
             visited[i] = TRUE; Visit(G.vexs[i]);
-            EnQueue(&Q,i);
+            EnQueue(&Q,i);              //i入队列
             while(!QueueEmpty(Q)){
-                DeQueue(&Q,&q);
-                for (v = FirstAdjVex(G,G.vexs[q]); v != ' '; v = NextAdjVex(G,G.vexs[q],v)){
-                    j = LocateVex(G,v);
-                    if(!visited[j]){
+                DeQueue(&Q,&k);         //队头元素出队并置为k
+                for (j = FirstAdjVex_i(G,k); j != 0; j = NextAdjVex_i(G,k,j))
+                    if(!visited[j]){    //j为k的尚未访问的邻接顶点
                         visited[j] = TRUE; Visit(G.vexs[j]);
                         EnQueue(&Q,j);
                     }//if
-                }//for
             }//while
         }//if
     DestroyQueue(&Q);

@@ -7,13 +7,13 @@
 #include "status.h"
 
 // - - - - - 二叉树的二叉链表存储表示 - - - - -
-typedef char TElemType;			//存储数据类型定为char
+typedef char TElemType;				//存储数据类型定为char
 typedef struct BiTNode{
 	TElemType data;
 	struct BiTNode *lchild,*rchild;	//左右孩子指针
 }BiTNode,*BiTree;
 
-typedef BiTNode* SElemType;		//栈中存储树结点指针
+typedef BiTNode* SElemType;			//栈中存储树结点指针
 #include "..\Stack\SqStack.h"
 
 // - - - - - 基本操作的算法描述 - - - - -
@@ -145,11 +145,11 @@ TElemType LeftSibling(BiTree T,BiTNode *p){
 TElemType RightSibling(BiTree T,BiTNode *p){
 	//返回p所指结点的右兄弟，若p无右兄弟，则返回"空"
 	BiTree tmp[100];
-	int i = 0,j = 0;
+	int i = 0, j = 0;
 	tmp[j++] = T;
-	while(i<j){		//层序遍历寻找双亲节点
-		if(tmp[i]->lchild==p || tmp[i]->rchild==p){	//p无右兄弟
-			if(tmp[i]->rchild==p || !tmp[i]->rchild)
+	while(i < j){		//层序遍历寻找双亲节点
+		if(tmp[i]->lchild == p || tmp[i]->rchild == p){		//p无右兄弟
+			if(tmp[i]->rchild == p || !tmp[i]->rchild)
 				return ' ';
 			else return tmp[i]->rchild->data;
 		}
