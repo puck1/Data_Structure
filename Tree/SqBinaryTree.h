@@ -57,7 +57,7 @@ Status BiTreeEmpty(SqBiTree T){
 
 int BiTreeDepth(SqBiTree T,int i){
 	//返回以某一结点为根的二叉树T的深度
-	int ld,rd;
+	int ld, rd;
 	if(T[i] == ' ')
 		return 0;
 	else{
@@ -130,48 +130,48 @@ Status DeleteChild(SqBiTree T,Position p,int LR){
 
 Status PreOrderTraverse_Recur(SqBiTree T,Status (*Visit)(TElemType),int i){
 	//先序遍历T的递归算法，对每个结点调用函数Visit一次且仅一次。一旦Visit()失败，则操作失败。
-	int ret = 1;
+	int ret = OK;
 	if(T[i] != ' '){
 		if(!Visit (T[i]))
-			ret = 0;
+			ret = ERROR;
 		if(2 * i + 1 < MAX_TREE_SIZE)		//左孩子结点未越界
 			if(!PreOrderTraverse_Recur(T,Visit,2 * i + 1))
-				ret = 0;
+				ret = ERROR;
 		if(2 * i + 2 < MAX_TREE_SIZE)		//右孩子结点未越界
 			if(!PreOrderTraverse_Recur(T,Visit,2 * i + 2))
-				ret = 0;
+				ret = ERROR;
 	}
 	return ret;
 }//PreOrderTraverse_Recur
 
 Status InOrderTraverse_Recur(SqBiTree T,Status (*Visit)(TElemType),int i){
 	//中序遍历T的递归算法，对每个结点调用函数Visit一次且仅一次。一旦Visit()失败，则操作失败。
-	int ret = 1;
+	int ret = OK;
 	if(T[i] != ' '){
 		if(2 * i + 1 < MAX_TREE_SIZE)		//左孩子结点未越界
 			if(!InOrderTraverse_Recur(T,Visit,2 * i + 1))
-				ret = 0;
+				ret = ERROR;
 		if(!Visit (T[i]))
-			ret = 0;
+			ret = ERROR;
 		if(2 * i + 2 < MAX_TREE_SIZE)		//右孩子结点未越界
 			if(!InOrderTraverse_Recur(T,Visit,2 * i + 2))
-				ret = 0;
+				ret = ERROR;
 	}
 	return ret;
 }//InOrderTraverse_Recur
 
 Status PostOrderTraverse_Recur(SqBiTree T,Status (*Visit)(TElemType),int i){
 	//后序遍历T的递归算法，对每个结点调用函数Visit一次且仅一次。一旦Visit()失败，则操作失败。
-	int ret = 1;
+	int ret = OK;
 	if(T[i] != ' '){
 		if(2 * i + 1 < MAX_TREE_SIZE)		//左孩子结点未越界
 			if(!PostOrderTraverse_Recur(T,Visit,2 * i + 1))
-				ret = 0;
+				ret = ERROR;
 		if(2 * i + 2 < MAX_TREE_SIZE)		//右孩子结点未越界
 			if(!PostOrderTraverse_Recur(T,Visit,2 * i + 2))
-				ret = 0;
+				ret = ERROR;
 		if(!Visit (T[i]))
-			ret = 0;
+			ret = ERROR;
 	}
 	return ret;
 }//PostOrderTraverse_Recur
