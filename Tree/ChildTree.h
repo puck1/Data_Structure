@@ -28,7 +28,7 @@ typedef struct {
 Status InitTree(CTree *T){
 	//构造空树T
 	int i;
-	for(i=0;i<MAX_TREE_SIZE;++i){
+	for(i = 0; i < MAX_TREE_SIZE; ++i){
 		(*T).nodes[i].parent = -1;
 		(*T).nodes[i].data = ' ';
 		(*T).nodes[i].firstchild = NULL;
@@ -42,7 +42,7 @@ Status DestroyTree(CTree *T){
 	//销毁树T
 	int i;
 	ChildPtr p,q;
-	for(i=0;i<(*T).n;++i){
+	for(i = 0; i < (*T).n; ++i){
 		(*T).nodes[i].parent = -1;
 		(*T).nodes[i].data = ' ';
 		p = (*T).nodes[i].firstchild;
@@ -102,7 +102,7 @@ Status ClearTree(CTree *T){
     //将树T清为空树
 	int i;
 	ChildPtr p,q;
-	for(i=0;i<(*T).n;++i){
+	for(i = 0; i < (*T).n; ++i){
 		(*T).nodes[i].data = ' ';
 		(*T).nodes[i].parent = -1;
 		p = (*T).nodes[i].firstchild;
@@ -140,7 +140,8 @@ int TreeDepth(CTree T){
 
 TElemType Root(CTree T){
     //返回T的根，若根不存在，返回“空”
-    return T.nodes[T.r].data;
+    if(T.n != 0) return T.nodes[T.r].data;
+	else return ' ';
 }//Root
 
 TElemType Value(CTree T,int p){
@@ -335,7 +336,7 @@ Status LevelOrderTraverse(CTree T,Status (*visit)(TElemType)){
     //层序遍历树T，对T的每个结点调用函数visit()一次且至多一次
     //一旦visit()失败，则操作失败
     int i;
-    for(i=T.r;i<T.n;++i)
+    for(i = T.r; i < T.n; ++i)
         if(!visit(T.nodes[i].data)) return ERROR;
     return OK;
 }//LevelOrderTraverse

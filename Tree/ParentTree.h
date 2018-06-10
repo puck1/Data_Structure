@@ -7,7 +7,9 @@
 
 // - - - - - 树的双亲链表（静态链表）存储表示 - - - - -
 // 树中结点始终按层序有序排列
+#ifndef MFSET_H         //并查集中存储数据类型重新定义
 typedef char TElemType; //存储数据类型定为char
+#endif // !MFSET_H
 #define MAX_TREE_SIZE 100
 typedef struct PTNode{  //结点结构
     TElemType   data;
@@ -22,7 +24,7 @@ typedef struct {        //树结构
 Status InitTree(PTree *T){
     //构造空树T
     int i;
-    for(i=0;i<MAX_TREE_SIZE;++i){
+    for(i = 0; i < MAX_TREE_SIZE; ++i){
         (*T).nodes[i].data = ' ';
         (*T).nodes[i].parent = -1;
     }
@@ -34,7 +36,7 @@ Status InitTree(PTree *T){
 Status DestroyTree(PTree *T){
     //销毁树T
     int i;
-    for(i=0;i<MAX_TREE_SIZE;++i){
+    for(i = 0; i < MAX_TREE_SIZE; ++i){
         (*T).nodes[i].parent = -1;
     }
     (*T).n = 0;
@@ -72,7 +74,7 @@ Status CreateTree(PTree *T){
 Status ClearTree(PTree *T){
     //将树T清为空树
     int i;
-    for(i=0;i<MAX_TREE_SIZE;++i){
+    for(i = 0; i < MAX_TREE_SIZE; ++i){
         (*T).nodes[i].data = ' ';
         (*T).nodes[i].parent = -1;
     }
@@ -104,7 +106,8 @@ int TreeDepth(PTree T){
 
 TElemType Root(PTree T){
     //返回T的根，若根不存在，返回“空”
-    return T.nodes[T.r].data;
+    if(T.n != 0) return T.nodes[T.r].data;
+    else return ' ';
 }//Root
 
 TElemType Value(PTree T,int p){
@@ -213,19 +216,19 @@ Status DeleteChild(PTree *T,int p,int i){
         if((*T).nodes[q].data == ' '){      //是要删除的结点
             k = q;
             while(k + 1 < (*T).n){
-                if((*T).nodes[k+1].parent > q)          //父结点已经移动
-                    (*T).nodes[k].parent = (*T).nodes[k+1].parent - 1;
+                if((*T).nodes[k + 1].parent > q)        //父结点已经移动
+                    (*T).nodes[k].parent = (*T).nodes[k + 1].parent - 1;
                 else
-                    (*T).nodes[k].parent = (*T).nodes[k+1].parent;
+                    (*T).nodes[k].parent = (*T).nodes[k + 1].parent;
 
-                if((*T).nodes[k+1].parent == q)
+                if((*T).nodes[k + 1].parent == q)
                     (*T).nodes[k].data = ' ';           //标记要删除结点的孩子
                 else
-                    (*T).nodes[k].data = (*T).nodes[k+1].data;
+                    (*T).nodes[k].data = (*T).nodes[k + 1].data;
                 ++k;
             }//while
-            (*T).nodes[k].data = ' ';
-			(*T).nodes[k].parent = -1;      //最后一个结点置空
+            (*T).nodes[k].data = ' ';       //最后一个结点置空
+			(*T).nodes[k].parent = -1;
             --(*T).n;                       //树的结点数减1
         }//if
         if((*T).nodes[q].data != ' ') ++q;  //若q为空则继续删除
@@ -237,7 +240,7 @@ Status LevelOrderTraverse(PTree T,Status (*visit)(TElemType)){
     //层序遍历树T，对T的每个结点调用函数visit()一次且至多一次
     //一旦visit()失败，则操作失败
     int i;
-    for(i=T.r;i<T.n;++i)
+    for(i = T.r; i < T.n; ++i)
         if(!visit(T.nodes[i].data)) return ERROR;
     return OK;
 }//LevelOrderTraverse
