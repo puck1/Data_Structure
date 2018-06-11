@@ -39,7 +39,7 @@ void InverseOLGraph(OLGraph *G){
 }//InverseOLGraph
 
 void DFSTraverse_SCC_1(OLGraph G){
-    //对图G进行深度优先遍历
+    //对图G进行深度优先遍历，并进行计数变量的初始化
     int i;
     count = 0;
     for (i = 1; i <= G.vexnum; ++i) visited[i] = FALSE; //访问标志数组初始化

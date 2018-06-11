@@ -1,5 +1,5 @@
 /** @workspace/Graph/UDGSpanningTree.h
- *  This file provides algorithmes to get a spanning tree
+ *  This file includes algorithmes to get a spanning tree
  *  or spanning forest of an undirected graph.
  */
 
