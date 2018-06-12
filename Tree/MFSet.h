@@ -17,8 +17,8 @@ typedef struct {
 typedef LinkList RSet;      //链表作为等价关系集合
 
 // - - - - - 基本操作的算法描述 - - - - -
-Status Initial_MFSet(MFSet *S,int n,SetElemType x[n]){
-    //初始化操作，构造一个由n个子集x[n]（每个子集只含单个成员）构成的集合S。
+Status Initial_MFSet(MFSet *S,int n,SetElemType x[n + 1]){
+    //初始化操作，构造一个由n个子集x[n + 1]（每个子集只含单个成员）构成的集合S。
     //子集数组0号单元弃用。
     int i;
     if(n < 1 || n > MAX_SET_SIZE) return ERROR;
@@ -125,5 +125,35 @@ int SubSetCount(MFSet S){
         if(S.nodes[i].parent < 0) count++;
     return count;
 }
+
+void PrintSet(MFSet S){
+    //打印集合S的所有等价类
+    int i, j;
+    int root[S.n + 1];          //root[i]为1则i为根结点
+    int tmp[S.n + 1][S.n + 1];  //tmp[i][j]为1则j是i的子孙
+    int cnt = 0;
+    int scnt = SubSetCount(S);
+    for (i = 1; i <= S.n; ++i)
+        for (j = 1; j <= S.n; ++j)
+            {tmp[i][j] = 0; root[j] = 0;}
+    for (i = 1; i <= S.n; ++i){
+        j = Find_MFSet(S,i);
+        if(i != j) tmp[j][i] = 1;
+        root[j] = 1;
+    }
+    printf("All equivalence class:");
+    for (i = 1; i <= S.n; ++i)
+        if (root[i] == 1){
+            printf("{%c",S.nodes[i].data);
+            for (j = 1; j <= S.n; ++j){
+                if(tmp[i][j] == 1)
+                    printf(",%c",S.nodes[j].data);
+            }//for
+            printf("}");
+            ++cnt;
+            if(cnt < scnt) printf(",");
+            else printf("\n");
+        }//if
+}//PrintSet
 
 #endif // !MFSET_H
