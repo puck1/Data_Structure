@@ -9,5 +9,7 @@ int main(int argc, char const *argv[]){
     CreateDG(&G);
     printf("Topological order of direcred graph G:");
     TopologicalSort(G);
+    printf("Topological sort to G by DFS:");
+    TopologicalSort_DFS(G);
     return 0;
 }//TopologicalSort_test
