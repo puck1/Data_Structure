@@ -2,7 +2,7 @@
  *  This file includes a algorithme to judge if
  *  there is a topological order of a directed graph.
  *  If there is one,print it.
- *  Also includes a algorithme by DFS.
+ *  Also includes a algorithme realized by DFS.
  */
 
 #ifndef TOPOLOGICALSORT_H
@@ -32,7 +32,7 @@ Status TopologicalSort(ALGraph G){
     ArcNode *p;
     SqStack S;
     int indegree[G.vexnum + 1];         //0号单元弃用
-    FindInDegree(G,indegree);           //对各顶点求入度indegree[0..vexnum-1]
+    FindInDegree(G,indegree);           //对各顶点求入度indegree[1..vexnum]
     InitStack(&S);
     for (i = 1; i <= G.vexnum; ++i)     //建零入度顶点栈S
         if (!indegree[i]) Push(&S,i);   //入度为0者进栈
@@ -66,7 +66,7 @@ void FindInDegree(ALGraph G,int indegree[]){
 
 Status TopologicalSort_DFS(ALGraph G){
     //利用深度优先遍历对有向图G进行拓扑排序
-    int i, j;
+    int i;
     int order;
     count = 0;
     for (i = 1; i <= G.vexnum; ++i) visited[i] = FALSE; //访问标志数组初始化
@@ -84,7 +84,7 @@ Status TopologicalSort_DFS(ALGraph G){
 
 Status DFS_Topo(ALGraph G,int i,int order){
     //从第i个顶点出发递归地深度优先遍历图G，将完成搜索的顶点号记录在辅助数组finished中
-    // order指示顶点i在DFS连通分量中的路径次序编号
+    //order指示顶点i在DFS连通分量中的路径次序编号★
     int j, k;
     visited[i] = TRUE;
     for (j = FirstAdjVex_i(G,i); j != 0; j = NextAdjVex_i(G,i,j)){
