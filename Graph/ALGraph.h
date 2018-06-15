@@ -13,7 +13,9 @@ typedef int QElemType;
 
 // - - - - - 图的邻接表(Adjacency List)存储表示 - - - - -
 typedef char    VertexType;         //存储数据类型定为char
-typedef char*   InfoType;
+#ifndef CRITICALPATH_H
+typedef char*   InfoType;           //弧信息类型，在求关键路径时重新定义
+#endif // !CRITICALPATH_H
 typedef enum {DG,UDG} GraphKind;    //{有向图，无向图}
 #define MAX_VERTEX_NUM  20
 typedef struct ArcNode{
@@ -46,9 +48,15 @@ Status CreateDG(ALGraph *DG){
     int IncInfo;
     ArcNode *a1,*a2;
     VertexType v1,v2;
+    #ifndef CRITICALPATH_H
     printf("Enter number of DG's vertex,arc and determine "
             "whether to include information(0/1):");
     scanf("%d%*c%d%*c%d%*c",&(*DG).vexnum,&(*DG).arcnum,&IncInfo);  //IncInfo为0则各弧不包含其他信息
+    #else
+    IncInfo = 1;
+    printf("Enter number of DN's vertex,arc:");
+    scanf("%d%*c%d%*c",&(*DG).vexnum,&(*DG).arcnum);
+    #endif // !CRITICALPATH_H
     printf("Enter the datas of all %d vertex(es) separated by delimitador:",(*DG).vexnum);
     for (k = 1; k <= (*DG).vexnum; ++k){        //建立头结点
         scanf("%c%*c",&(*DG).vertices[k].data);
@@ -66,10 +74,17 @@ Status CreateDG(ALGraph *DG){
         if(!a2) exit(OVERFLOW);
         a2->adjvex = j; a2->nextarc = NULL;
         if(IncInfo){                            //若弧含有相关信息，则输入
+            #ifndef CRITICALPATH_H
             printf("Enter information (No longer than 20 chars):");
             a2->info = (InfoType *)malloc(sizeof(InfoType));
             if(!a2->info) exit(OVERFLOW);
             *(a2->info) = getstr();             //input information
+            #else
+            printf("Enter the weight of the arc <'%c','%c'>:",v1,v2);
+            a2->info = (InfoType *)malloc(sizeof(InfoType));
+            if(!a2->info) exit(OVERFLOW);
+            scanf("%d%*c",a2->info);
+            #endif // !CRITICALPATH_H
         }
         else a2->info = NULL;
         if(a1) a1->nextarc = a2;
