@@ -72,7 +72,7 @@ Status CriticalPath(ALGraph G){
             j = p->adjvex;  dut = *(p->info);
             ee = ve[i]; el = vl[j] - dut;
             tag = (ee == el) ? '*' : '\0';
-            printf("'%c' -- '%c', dut = %2d, ee = %2d, el = %2d, %c\n",
+            printf("'%c' -> '%c', dut = %2d, ee = %2d, el = %2d, %c\n",
                     G.vertices[i].data,G.vertices[j].data,dut,ee,el,tag);   //输出关键活动
         }//for
     return OK;
@@ -95,7 +95,7 @@ Status CriticalPath_DFS(ALGraph G){
             j = p->adjvex;  dut = *(p->info);
             ee = ve[i]; el = vl[j] - dut;
             tag = (ee == el) ? '*' : '\0';
-            printf("'%c' -- '%c', dut = %2d, ee = %2d, el = %2d, %c\n",
+            printf("'%c' -> '%c', dut = %2d, ee = %2d, el = %2d, %c\n",
                     G.vertices[i].data,G.vertices[j].data,dut,ee,el,tag);   //输出关键活动
         }//for
     return OK;
