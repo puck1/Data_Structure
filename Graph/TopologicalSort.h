@@ -1,7 +1,6 @@
 /** @workspace/Graph/TopologicalSort.h
- *  This file includes a algorithme to judge if
- *  there is a topological order of a directed graph.
- *  If there is one,print it.
+ *  This file includes a algorithme to judge if there is a topological order
+ *  of a directed graph.If there is one,print it out.
  *  Also includes a algorithme realized by DFS.
  */
 
