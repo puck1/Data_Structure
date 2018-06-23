@@ -14,14 +14,15 @@ typedef struct {
 }SSTable;
 
 // - - - - - 基本操作的算法描述 - - - - -
-Status CreateSSTable_Seq(SSTable *ST,int n){
+Status CreateSSTable_Seq(SSTable *ST){
     //构造一个顺序存储表示的含n个数据元素的静态查找表ST。
     int i;
-    (*ST).elem = (STElemType *)malloc((n + 1) * sizeof(STElemType));
+    printf("Enter number of element(s) in the table:");
+    scanf("%d%*c",&(*ST).length);
+    (*ST).elem = (STElemType *)malloc(((*ST).length + 1) * sizeof(STElemType));
     if (!(*ST).elem) exit(OVERFLOW);
-    printf("Enter %d elements' keys seperated by delimiter:",n);
-    for (i = 1; i <= n; ++i) scanf("%d%*c",&((*ST).elem[i].key));
-    (*ST).length = n;
+    printf("Enter %d elements' keys seperated by delimiter:",(*ST).length);
+    for (i = 1; i <= (*ST).length; ++i) scanf("%d%*c",&((*ST).elem[i].key));
     printf("Succeeded!\n");
     return OK;
 }//CreateSSTable_Seq
