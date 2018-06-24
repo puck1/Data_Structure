@@ -7,16 +7,19 @@
 #include "status.h"
 
 // - - - - - 二叉树的二叉链表存储表示 - - - - -
+#ifndef BINARYSORTTREE_H			//在二叉排序树中，存储数据类型需重新定义
 typedef char TElemType;				//存储数据类型定为char
+#endif // !BINARYSORTTREE_H
 typedef struct BiTNode{
 	TElemType data;
 	struct BiTNode *lchild,*rchild;	//左右孩子指针
-}BiTNode,*BiTree;
+}BiTNode, *BiTree;
 
 typedef BiTNode* SElemType;			//栈中存储树结点指针
 #include "..\Stack\SqStack.h"
 
 // - - - - - 基本操作的算法描述 - - - - -
+#ifndef BINARYSORTTREE_H
 Status InitBiTree(BiTree *T){
 	//构造空二叉树T
 	*T = NULL;
@@ -38,7 +41,7 @@ Status CreateBiTree(BiTree *T){
 	//按先序次序输入二叉树中结点的值（一个字符），空格字符表示空树，
 	//构造二叉树T
 	TElemType e = getchar();
-	if(e == ' ') *T = NULL;
+	if(e == ' ' || e == '\n') *T = NULL;
 	else{
 		*T = (BiTree)malloc(sizeof(BiTNode));
 		if(!(*T)) exit(OVERFLOW);
@@ -353,4 +356,5 @@ Status LevelOrderTraverse(BiTree T,Status (*Visit)(TElemType)){	//★
 	return OK;
 }//LevelOrderTraverse
 
-#endif
+#endif // !BINARYSORTTREE_H
+#endif // !BILINKBINARYTREE_H
