@@ -27,9 +27,9 @@ Status CreateISTable(ISTable *ST){
     int index = 1;
     printf("Enter number of element(s) in the table:");
     scanf("%d%*c",&(*ST).length);
+    (*ST).elem = (STElemType *)malloc(((*ST).length + 1) * sizeof(STElemType));
+    if (!(*ST).elem) exit(OVERFLOW);
     if ((*ST).length){
-        (*ST).elem = (STElemType *)malloc(((*ST).length + 1) * sizeof(STElemType));
-        if (!(*ST).elem) exit(OVERFLOW);
         printf("Enter max quantity of elements in every subtable:"); scanf("%d%*c",&subcnt);
                                                                     //subcnt指示子表最大元素数目
         if (!subcnt) return ERROR;
@@ -125,8 +125,9 @@ Status Traverse(ISTable ST,Status Visit(STElemType)){
         end = ST.length;
         for (j = start; j <= end; ++j)          //此时j <= end,即包括第ST.length个元素
             if (!Visit(ST.elem[j])) return ERROR;
-    }
-    printf("\nSucceeded!\n");
+        printf("\n");
+    }//if
+    printf("Succeeded!\n");
     return OK;
 }//Traverse
 
