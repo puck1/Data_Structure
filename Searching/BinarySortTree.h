@@ -72,7 +72,7 @@ Status InsertBST(BiTree *T,STElemType e){
 Status DeleteBST(BiTree *T,KeyType key){
     //若二叉排序树T中存在关键字等于key的数据元素，则删除该数据元素结点，
     //并返回TRUE；否则返回FALSE
-    if (!(*T)) return FALSE;                               //不存在关键字等于key的数据元素
+    if (!(*T)) return FALSE;                            //不存在关键字等于key的数据元素
     else if (EQ(key,(*T)->data.key)) return Delete(T);  //找到关键字等于key的数据元素
     else if (LT(key,(*T)->data.key)) return DeleteBST(&((*T)->lchild),key);
     else return DeleteBST(&((*T)->rchild),key);
@@ -124,7 +124,7 @@ void CreateBST(BiTree *T){
     for (i = 1; i <= n; ++i){
         scanf("%d%*c",&(e.key));
         InsertBST(T,e);
-    }
+    }//for
     printf("Succeeded!\n");
 }//CreateBST
 
