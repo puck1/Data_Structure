@@ -2,9 +2,10 @@
  *  This file includes a kind of abstract data structure
  *  BALANCED BINARY TREE or HEIGHT-BALANCED TREE,also called AVL TREE.
  *  AVL Tree is named after its inventors,G. M. Adelson-Velsky and E. M. Landis.
- *  An AVL Tree is an empty tree or a tree with such propeties:
+ *  An AVL Tree is an empty tree or a tree with such properties:
  *  Its left subtree and right subtree are also AVL Tree and the absolute value of difference
  *  in depth between its left subtree and right one is not more than 1.
+ *  Also includes algorithmes of searching,inserting,deleting and traversing of AVL Tree.
  */
 
 #ifndef AVLTREE_H
@@ -156,17 +157,17 @@ void L_Rotate(BBSTree *p){
     rc->lchild = *p; *p = rc;           //*p指向新的根结点
 }//L_Rotate
 
-Status DeleteAVL(BBSTree *T,STElemType e,bool *shorter){
-    //若在平衡的二叉排序树T中存在和e有相同关键字的结点，则删除该结点，并返回TRUE，
+Status DeleteAVL(BBSTree *T,KeyType key,bool *shorter){
+    //若在平衡的二叉排序树T中存在关键字等于key的数据元素，则删除该结点，并返回TRUE，
     //否则返回FALSE。若因删除而使二叉排序树失去平衡，则做平衡旋转处理，
     //布尔变量taller反映T长高与否
     BBSTree lc, rc;
     if (!(*T)) return FALSE;
     else {
-        if (EQ(e.key,(*T)->data.key))               //待删除结点
+        if (EQ(key,(*T)->data.key))               //待删除结点
             Delete(T,shorter);
-        else if (LT(e.key,(*T)->data.key)) {        //应继续在*T的左子树中进行搜索
-            if (!DeleteAVL(&((*T)->lchild),e,shorter)) return FALSE;    //未删除
+        else if (LT(key,(*T)->data.key)) {        //应继续在*T的左子树中进行搜索
+            if (!DeleteAVL(&((*T)->lchild),key,shorter)) return FALSE;    //未删除
             if (*shorter)                           //已在*T的左子树中删除且左子树“变矮”
                 switch ((*T)->bf) {                 //检查*T的平衡度
                     case LH:                        //原本左子树比右子树高，现左、右子树等高，树变矮
@@ -182,10 +183,11 @@ Status DeleteAVL(BBSTree *T,STElemType e,bool *shorter){
                             default:                //对*T作右平衡处理，树变矮
                                 RightBalance(T); *shorter = TRUE; break;
                         }//switch (rc->bf)
+                        break;
                 }//switch ((*T)->bf)
         }//else if
         else {                                      //应继续在*T的右子树中进行搜索
-            if (!DeleteAVL(&((*T)->rchild),e,shorter)) return FALSE;     //未删除
+            if (!DeleteAVL(&((*T)->rchild),key,shorter)) return FALSE;     //未删除
             if (*shorter)                           //已在*T的右子树中删除且右子树“变矮”
                 switch ((*T)->bf) {                 //检查*T的平衡度
                     case LH:                        //原本左子树比右子树高，需要作平衡处理
@@ -194,10 +196,10 @@ Status DeleteAVL(BBSTree *T,STElemType e,bool *shorter){
                             case EH:                //对*T作单右旋处理，树高度不变
                                 (*T)->bf = LH; lc->bf = RH; R_Rotate(T);
                                 *shorter = FALSE; break;
-                                break;
                             default:                //对*T作左平衡处理，树变矮
                                 LeftBalance(T); *shorter = TRUE; break;
                         }//switch (lc->bf)
+                        break;
                     case EH:                        //原本、左右子树等高，现右子树变矮，树高度不变
                         (*T)->bf = LH; *shorter = FALSE; break;
                     case RH:                        //原本右子树比左子树高，现左、右子树等高，树变矮
@@ -222,7 +224,7 @@ void Delete(BBSTree *p,bool *shorter){
         q = (*p)->lchild;
         while (q->rchild) q = q->rchild;    //转左，然后向右到尽头
         tmp = q->data;                      //q指向被删结点的“前驱”
-        *shorter = FALSE; DeleteAVL(p,tmp,shorter); //AVL树中删除q结点（q结点左右子树至少一个为空）★
+        *shorter = FALSE; DeleteAVL(p,tmp.key,shorter); //AVL树中删除q结点（q结点左右子树至少一个为空）★
         (*p)->data = tmp;                   //q结点的值赋给*p结点
     }//else
 }//Delete
