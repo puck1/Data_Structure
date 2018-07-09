@@ -14,7 +14,7 @@ int main(int argc, char const *argv[]){
     STElemType e;
     bool taller, shorter;
 
-    /** eg:    NOT AN AVL TREE      ->      AVL TREE      ->      MODIFIED
+    /** Eg:    NOT AN AVL TREE      ->      AVL TREE      ->      MODIFIED
      *                50                        50                    23
      *              /   \                     /   \                 /    \
      *             /     \                   /     \               /      \
@@ -32,7 +32,7 @@ int main(int argc, char const *argv[]){
     printf("Ordered sequence:");
     InorderTraverseAVL(T,PrintElement); printf("\n");
 
-    SearchAVL(T,14) == NULL ? printf("Key 40 isn't in T.\n") : printf("Key 40 is in T.\n");
+    SearchAVL(T,14) == NULL ? printf("Key 14 isn't in T.\n") : printf("Key 14 is in T.\n");
     SearchAVL(T,70) == NULL ? printf("Key 70 isn't in T.\n") : printf("Key 70 is in T.\n");
 
     printf("Insert key 14 into T..."); e.key = 14; taller = FALSE;
