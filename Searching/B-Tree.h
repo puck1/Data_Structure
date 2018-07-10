@@ -50,8 +50,8 @@ void DestroyBTree(BTree *T){
     int i;
     if (*T){
         for (i = 0; i <= (*T)->keynum; ++i){
-            if ((*T)->ptr[i]) DestroyBTree((*T)->ptr);
-            if (i && (*T)->recptr[i]) free((*T)->recptr);
+            if ((*T)->ptr[i]) DestroyBTree(&((*T)->ptr[i]));
+            if (i && (*T)->recptr[i]) free((*T)->recptr[i]);
         }//for
         free(*T); *T = NULL;
     }//if
@@ -215,8 +215,10 @@ void DeleteKey(BTree *T,BTNode *q,int i){
     int LR; bool finished;
     pa = q->parent;
     s = ceil((double)m / 2);            // s = ┌m/2┐;
-    if (!pa && q->keynum == 1)          //只有一个关键字的根结点
-        { *T = q->ptr[0]; free(q); }
+    if (!pa && q->keynum == 1){          //只有一个关键字的根结点
+        if (q->recptr) free(q->recptr);
+        *T = q->ptr[0]; free(q);
+    }//if
     else if (!pa || q->keynum >= s)     //*q结点中关键字数目不小于2（根结点）或者┌m/2┐
         DeleteRight(q,i);               //直接删除*q结点中的key[i]与ptr[i]
     else {
@@ -239,7 +241,7 @@ void DeleteKey(BTree *T,BTNode *q,int i){
                 Move(q,si,up,down,LR);
                 finished = TRUE;
             }
-        }//else if (j != 0)
+        }//if (j != 0)
         if (!finished) {                //被删关键字所在结点和其相邻的兄弟结点中的关键字数目均等于┌m/2┐ - 1
             switch (LR) {
                 case 1:                 //存在右兄弟，优先对右兄弟进行处理
