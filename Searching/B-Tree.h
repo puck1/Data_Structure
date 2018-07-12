@@ -216,7 +216,7 @@ void DeleteKey(BTree *T,BTNode *q,int i){
     pa = q->parent;
     s = ceil((double)m / 2);            // s = ┌m/2┐;
     if (!pa && q->keynum == 1){          //只有一个关键字的根结点
-        if (q->recptr) free(q->recptr);
+        if (q->recptr[1]) free(q->recptr[1]);
         *T = q->ptr[0]; free(q);
     }//if
     else if (!pa || q->keynum >= s)     //*q结点中关键字数目不小于2（根结点）或者┌m/2┐
