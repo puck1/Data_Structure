@@ -15,7 +15,7 @@ int main(int argc, char const *argv[]){
     BPTree T;
     KeyType K;
 
-    printf("Create B-Tree T...\n");
+    printf("Create B+Tree T...\n");
     CreateBPTree(&T);
     printf("Ordered sequence of keyword value:");
     InorderTraverseBPTree(T,PrintKeyword); printf("\n");
@@ -40,7 +40,7 @@ int main(int argc, char const *argv[]){
     InorderTraverseBPTree(T,PrintKeyword); printf("\n");
     printf("Sequence of leaf keyword value:");
     SeqTraverseBPTree(T,PrintKeyword); printf("\n");
-    printf("Level order traverse of B-Tree:\n");
+    printf("Level order traverse of B+Tree:\n");
     LevelOrderTraverseBPTree(T,PrintKeyword);printf("\n");
 
     DestroyBPTree(&T); (T.root || T.sqt) ? printf("T isn't destroyed!\n") : printf("T is destroyed!\n");
