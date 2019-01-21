@@ -57,7 +57,7 @@ Status CreateHash(HashTable *H){
     scanf("%d%*c",&i);
     for (j = 1; j < sizeof(hashsize) / sizeof(hashsize[0]) && hashsize[j] < i; ++j);//寻找最适容量
     if (j == sizeof(hashsize) / sizeof(hashsize[0]))    //超过hashsize数组下标
-        { printf("Excess capacity limit！\n"); return ERROR; }
+        { printf("Exceed capacity limit！\n"); return ERROR; }
     (*H).sizeindex = j;
     (*H).elem = (STElemType *)malloc(hashsize[(*H).sizeindex] * sizeof(STElemType));
     if (!(*H).elem) { printf("OVERFLOW!\n"); exit(OVERFLOW); }
@@ -91,8 +91,8 @@ Status SearchHash(HashTable H,KeyType K,int *p,int *c){
 
 
 Status InsertHash(HashTable *H,STElemType e){
-    //查找不成功时插入数据元素e到开放定址哈希表*H中，并返回OK；若冲突次数
-    //过大，则重建哈希表
+    //查找不成功时插入数据元素e到开放定址哈希表*H中，并返回OK；
+    //若冲突次数过大，则重建哈希表
     int p = 0, c = 0;
     if (SearchHash(*H,e.key,&p,&c))
         return DUPLICATE;                               //表中已有与e有相同关键字的元素
